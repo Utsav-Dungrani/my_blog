@@ -1,0 +1,21 @@
+{
+    "name": "nitsan-ai/my_blog",
+    "type": "typo3-cms-extension",
+    "description": "",
+    "homepage": "https://typo3-13.4-composer.ddev.site/",
+    "license": "GPL-2.0-or-later",
+    "keywords": ["TYPO3 CMS"],
+    "require": {
+        "typo3/cms-core": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "NitsanAi\\MyBlog\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "my_blog"
+        }
+    }
+}

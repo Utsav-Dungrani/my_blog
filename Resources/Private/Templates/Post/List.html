@@ -1,0 +1,43 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Blog Posts</h2>
+        <f:link.action action="new" class="btn btn-primary">+ Create New Post</f:link.action>
+    </div>
+
+    <f:flashMessages />
+
+    <f:if condition="{posts}">
+        <f:then>
+            <div class="row g-3">
+                <f:for each="{posts}" as="post">
+                    <div class="col-12 col-md-6">
+                        <div class="card h-100">
+                            <f:if condition="{post.image}">
+                                <f:then>
+                                    <f:image class="card-img-top" image="{post.image}" alt="{post.title}" width="600" />
+                                </f:then>
+                            </f:if>
+                            <div class="card-body">
+                                <h5 class="card-title">{post.title}</h5>
+                                <p class="card-subtitle mb-2 text-muted">By {post.author}</p>
+                                <p class="card-text">{post.description -> f:format.crop(maxCharacters: 140)}</p>
+                                <div class="mt-3">
+                                    <f:link.action action="show" arguments="{post: post}" class="btn btn-sm btn-outline-primary">Read More</f:link.action>
+                                    <f:link.action action="edit" arguments="{post: post}" class="btn btn-sm btn-outline-secondary ms-2">Edit</f:link.action>
+                                    <f:link.action action="delete" arguments="{post: post}" class="btn btn-sm btn-outline-danger ms-2">Delete</f:link.action>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </f:for>
+            </div>
+        </f:then>
+        <f:else>
+            <div class="alert alert-info">No blog posts found.</div>
+        </f:else>
+    </f:if>
+</div>
+
+</html>

@@ -1,0 +1,10 @@
+page = PAGE
+page {
+    typeNum = 0
+    10 = CONTENT
+    10 {
+        table = tt_content
+        select.orderBy = sorting
+        select.where = {#colPos}=0
+    }
+}
