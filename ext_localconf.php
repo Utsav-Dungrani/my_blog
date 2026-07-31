@@ -9,14 +9,17 @@ ExtensionManagementUtility::addTypoScriptSetup(
     '@import "EXT:my_blog/Configuration/TypoScript/setup.typoscript"'
 );
 
+$GLOBALS['TYPO3_CONF_VARS']['FE']['checkFeUserPid'] = false;
+
 ExtensionUtility::configurePlugin(
     'MyBlog',
     'BlogPlugin',
     [
-        PostController::class => 'list, show, new, create, edit, update, delete',
+        PostController::class => 'list, show, new, create, edit, update, delete, addComment',
+        \NitsanAi\MyBlog\Controller\AuthController::class => 'register, createAccount',
     ],
-    
     [
-        PostController::class => 'new, create, edit, update, delete',
+        PostController::class => 'list, show, new, create, edit, update, delete, addComment',
+        \NitsanAi\MyBlog\Controller\AuthController::class => 'register, createAccount',
     ]
 );

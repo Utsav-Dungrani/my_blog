@@ -1,0 +1,53 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm mt-5">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">Create an Account</h2>
+                    
+                    <f:flashMessages />
+
+                    <f:form action="createAccount" controller="Auth" method="post" additionalAttributes="{role: 'form'}">
+                        
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <f:form.textfield name="username" id="username" class="form-control" required="required" placeholder="Choose a username" />
+                            </div>
+                            
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="name" class="form-label">Full Name</label>
+                                <f:form.textfield name="name" id="name" class="form-control" required="required" placeholder="Enter your full name" />
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <f:form.textfield name="email" id="email" type="email" class="form-control" required="required" placeholder="Enter your email" />
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <f:form.password name="password" id="password" class="form-control" required="required" placeholder="Minimum 12 characters" />
+                            </div>
+                            
+                            <div class="col-md-6 form-group mb-4">
+                                <label for="passwordConfirmation" class="form-label">Confirm Password</label>
+                                <f:form.password name="passwordConfirmation" id="passwordConfirmation" class="form-control" required="required" placeholder="Repeat password" />
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Sign up</button>
+                        </div>
+                    </f:form>
+                    
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Already have an account? <f:link.action action="login" controller="Auth">Log in</f:link.action></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

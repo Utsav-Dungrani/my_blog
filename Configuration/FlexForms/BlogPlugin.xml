@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<T3DataStructure>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>Blog settings</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.displayMode>
+                        <label>Display mode</label>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <default>card</default>
+                            <items type="array">
+                                <numIndex index="0" type="array">
+                                    <label>Card view</label>
+                                    <value>card</value>
+                                </numIndex>
+                                <numIndex index="1" type="array">
+                                    <label>List view</label>
+                                    <value>list</value>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.displayMode>
+                    <settings.cardItemsPerRow>
+                        <label>Cards per row</label>
+                        <description>Used when Display mode is Card view.</description>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <default>2</default>
+                            <items type="array">
+                                <numIndex index="0" type="array"><label>1 card</label><value>1</value></numIndex>
+                                <numIndex index="1" type="array"><label>2 cards</label><value>2</value></numIndex>
+                                <numIndex index="2" type="array"><label>3 cards</label><value>3</value></numIndex>
+                                <numIndex index="3" type="array"><label>4 cards</label><value>4</value></numIndex>
+                            </items>
+                        </config>
+                    </settings.cardItemsPerRow>
+                    <settings.listItemsPerRow>
+                        <label>List items per row</label>
+                        <description>Used when Display mode is List view.</description>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <default>1</default>
+                            <items type="array">
+                                <numIndex index="0" type="array"><label>1 item</label><value>1</value></numIndex>
+                                <numIndex index="1" type="array"><label>2 items</label><value>2</value></numIndex>
+                                <numIndex index="2" type="array"><label>3 items</label><value>3</value></numIndex>
+                                <numIndex index="3" type="array"><label>4 items</label><value>4</value></numIndex>
+                            </items>
+                        </config>
+                    </settings.listItemsPerRow>
+                    <settings.filterCategories>
+                        <label>Categories available in filter</label>
+                        <description>Select categories to limit the displayed posts and frontend filter. Leave empty to use all categories.</description>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectMultipleSideBySide</renderType>
+                            <foreign_table>sys_category</foreign_table>
+                            <foreign_table_where>ORDER BY sys_category.sorting</foreign_table_where>
+                            <size>8</size>
+                            <minitems>0</minitems>
+                            <maxitems>999</maxitems>
+                        </config>
+                    </settings.filterCategories>
+                    <settings.defaultCategory>
+                        <label>Default category</label>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <foreign_table>sys_category</foreign_table>
+                            <foreign_table_where>ORDER BY sys_category.sorting</foreign_table_where>
+                            <items type="array">
+                                <numIndex index="0" type="array">
+                                    <label>All categories</label>
+                                    <value>0</value>
+                                </numIndex>
+                            </items>
+                            <minitems>0</minitems>
+                            <maxitems>1</maxitems>
+                        </config>
+                    </settings.defaultCategory>
+                    <settings.showCategoryFilter>
+                        <label>Show category filter</label>
+                        <config>
+                            <type>check</type>
+                            <default>1</default>
+                        </config>
+                    </settings.showCategoryFilter>
+                    <settings.postsPerPage>
+                        <label>Posts per page</label>
+                        <description>Leave empty or use 0 to display all posts.</description>
+                        <config>
+                            <type>number</type>
+                            <default>0</default>
+                            <range>
+                                <lower>0</lower>
+                            </range>
+                        </config>
+                    </settings.postsPerPage>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
+</T3DataStructure>

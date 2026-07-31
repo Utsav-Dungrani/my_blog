@@ -1,38 +1,116 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:blog="http://typo3.org/ns/NitsanAi/MyBlog/ViewHelpers"
+      data-namespace-typo3-fluid="true">
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <h2 class="mb-0">Blog Posts</h2>
-        <f:link.action action="new" class="btn btn-primary">+ Create New Post</f:link.action>
+        <div class="d-flex align-items-center gap-2">
+            <f:security.ifAuthenticated>
+                <f:then>
+                    <f:link.action action="new" class="btn btn-primary">+ Create New Post</f:link.action>
+                </f:then>
+                <f:else>
+                    <f:link.action action="register" controller="Auth" class="btn btn-outline-primary">Sign Up</f:link.action>
+                </f:else>
+            </f:security.ifAuthenticated>
+        </div>
     </div>
 
     <f:flashMessages />
 
+    <f:if condition="{showCategoryFilter} && {categories}">
+        <div class="mb-4" aria-label="Filter blog posts by category">
+            <span class="me-2 fw-semibold">Filter by:</span>
+            <f:link.action action="list" arguments="{showAll: 1}" class="btn btn-sm {f:if(condition: '{selectedCategory} || {myPostsActive}', then: 'btn-outline-success', else: 'btn-success')}">All Posts</f:link.action>
+            
+            <f:security.ifAuthenticated>
+                <f:link.action action="list" arguments="{myPosts: 1}" class="btn btn-sm {f:if(condition: myPostsActive, then: 'btn-success', else: 'btn-outline-success')}">My Posts</f:link.action>
+            </f:security.ifAuthenticated>
+            
+            <span class="mx-2 fw-semibold text-muted">|</span>
+            <f:for each="{categories}" as="category">
+                <f:if condition="{blog:isSelectedCategory(category: category, selectedCategory: selectedCategory)}">
+                    <f:then>
+                        <f:link.action action="list" arguments="{selectedCategory: category}" class="btn btn-sm btn-success">{category.title}</f:link.action>
+                    </f:then>
+                    <f:else>
+                        <f:link.action action="list" arguments="{selectedCategory: category}" class="btn btn-sm btn-outline-success">{category.title}</f:link.action>
+                    </f:else>
+                </f:if>
+            </f:for>
+        </div>
+    </f:if>
+
     <f:if condition="{posts}">
         <f:then>
-            <div class="row g-3">
-                <f:for each="{posts}" as="post">
-                    <div class="col-12 col-md-6">
-                        <div class="card h-100">
-                            <f:if condition="{post.image}">
-                                <f:then>
-                                    <f:image class="card-img-top" image="{post.image}" alt="{post.title}" width="600" />
-                                </f:then>
-                            </f:if>
-                            <div class="card-body">
-                                <h5 class="card-title">{post.title}</h5>
-                                <p class="card-subtitle mb-2 text-muted">By {post.author}</p>
-                                <p class="card-text">{post.description -> f:format.crop(maxCharacters: 140)}</p>
-                                <div class="mt-3">
-                                    <f:link.action action="show" arguments="{post: post}" class="btn btn-sm btn-outline-primary">Read More</f:link.action>
-                                    <f:link.action action="edit" arguments="{post: post}" class="btn btn-sm btn-outline-secondary ms-2">Edit</f:link.action>
-                                    <f:link.action action="delete" arguments="{post: post}" class="btn btn-sm btn-outline-danger ms-2">Delete</f:link.action>
+            <f:if condition="{displayMode} == 'list'">
+                <f:then>
+                    <div class="row g-3">
+                        <f:for each="{posts}" as="post">
+                            <article class="{listColumnClass}">
+                                <div class="list-group-item h-100 border border-2 border-secondary rounded">
+                                <div class="row g-3 align-items-center">
+                                    <f:if condition="{post.image}">
+                                        <div class="col-md-3">
+                                            <f:image class="img-fluid rounded" image="{post.image}" alt="{post.title}" width="300" />
+                                        </div>
+                                    </f:if>
+                                    <div class="{f:if(condition: post.image, then: 'col-md-9', else: 'col-12')}">
+                                        <h5>{post.title}</h5>
+                                        <div class="text-muted small mb-2">👤 {post.author} · ⏱️ {post.readingTime} min read · 👁️ {post.views} views</div>
+                                        <f:if condition="{post.categories}">
+                                            <div class="mb-2">
+                                                <f:for each="{post.categories}" as="category"><span class="badge bg-primary me-1">{category.title}</span></f:for>
+                                            </div>
+                                        </f:if>
+                                        <p class="mb-2">{post.description -> f:format.stripTags() -> f:format.crop(maxCharacters: 220)}</p>
+                                        <f:link.action action="show" arguments="{post: post}" class="btn btn-sm btn-outline-primary">Read More</f:link.action>
+                                        <f:security.ifAuthenticated>
+                                            <f:if condition="{post.feUser.uid} == {loggedInUserUid}">
+                                                <f:link.action action="edit" arguments="{post: post}" class="btn btn-sm btn-outline-secondary ms-2">Edit</f:link.action>
+                                                <f:link.action action="delete" arguments="{post: post}" class="btn btn-sm btn-outline-danger ms-2">Delete</f:link.action>
+                                            </f:if>
+                                        </f:security.ifAuthenticated>
+                                    </div>
+                                </div>
+                                </div>
+                            </article>
+                        </f:for>
+                    </div>
+                </f:then>
+                <f:else>
+                    <div class="row g-3">
+                        <f:for each="{posts}" as="post">
+                            <div class="{cardColumnClass}">
+                                <div class="card h-100 border border-2 border-secondary">
+                                    <f:if condition="{post.image}"><f:image class="card-img-top" image="{post.image}" alt="{post.title}" width="600" /></f:if>
+                                    <div class="card-body">
+                                        <h5 class="card-title">{post.title}</h5>
+                                        <div class="d-flex flex-wrap gap-2 align-items-center mb-2 text-muted small">
+                                            <span>👤 {post.author}</span>
+                                            <span>⏱️ {post.readingTime} min read</span>
+                                            <span>👁️ {post.views} views</span>
+                                            <span>💬 {blog:commentCount(comments: post.comments)}</span>
+                                        </div>
+                                        <f:if condition="{post.categories}"><div class="mb-2"><f:for each="{post.categories}" as="category"><span class="badge bg-primary me-1">{category.title}</span></f:for></div></f:if>
+                                        <p class="card-text">{post.description -> f:format.stripTags() -> f:format.crop(maxCharacters: 140)}</p>
+                                        <div class="mt-3">
+                                            <f:link.action action="show" arguments="{post: post}" class="btn btn-sm btn-outline-primary">Read More</f:link.action>
+                                            <f:security.ifAuthenticated>
+                                                <f:if condition="{post.feUser.uid} == {loggedInUserUid}">
+                                                    <f:link.action action="edit" arguments="{post: post}" class="btn btn-sm btn-outline-secondary ms-2">Edit</f:link.action>
+                                                    <f:link.action action="delete" arguments="{post: post}" class="btn btn-sm btn-outline-danger ms-2">Delete</f:link.action>
+                                                </f:if>
+                                            </f:security.ifAuthenticated>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </f:for>
                     </div>
-                </f:for>
-            </div>
+                </f:else>
+            </f:if>
         </f:then>
         <f:else>
             <div class="alert alert-info">No blog posts found.</div>

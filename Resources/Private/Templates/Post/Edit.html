@@ -17,14 +17,46 @@
         </div>
 
         <div class="mb-3">
+            <label for="readingTime" class="form-label">Reading Time (minutes) <span class="text-danger">*</span></label>
+            <f:form.textfield property="readingTime" id="readingTime" type="number" required="true" additionalAttributes="{min: '1'}" class="form-control" placeholder="e.g. 5" />
+        </div>
+
+        <div class="mb-3 form-check">
+            <f:form.checkbox property="allowComments" value="1" id="allowComments" class="form-check-input" />
+            <label class="form-check-label fw-bold" for="allowComments">Allow readers to comment on this post</label>
+        </div>
+
+        <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <f:form.textarea property="description" id="description" rows="5" required="true" class="form-control" />
         </div>
 
+        <f:if condition="{categories}">
+            <div class="mb-3">
+                <label class="form-label d-block fw-bold">Categories</label>
+                <div class="d-flex flex-wrap gap-3 p-3 bg-light rounded border">
+                    <f:for each="{categories}" as="category">
+                        <div class="form-check">
+                            <f:form.checkbox property="categories" value="{category.uid}" multiple="true" id="cat-edit-{category.uid}" class="form-check-input" />
+                            <label class="form-check-label" for="cat-edit-{category.uid}">{category.title}</label>
+                        </div>
+                    </f:for>
+                </div>
+                <div class="form-text text-muted">Select at least 1 category.</div>
+            </div>
+        </f:if>
+
+        <f:if condition="{post.image}">
+            <div class="mb-3">
+                <label class="form-label d-block">Current Image</label>
+                <f:image image="{post.image}" width="150" class="img-thumbnail rounded" />
+            </div>
+        </f:if>
+
         <div class="d-flex gap-2">
             <div class="mb-3 w-100">
                 <label for="image" class="form-label">Image (replace)</label>
-                <f:form.upload property="image" id="image" accept=".jpg,.jpeg,.png" class="form-control" />
+                <f:form.upload name="imageUpload" id="image" accept=".jpg,.jpeg,.png,.webp" class="form-control" />
             </div>
             <f:form.submit value="Update Post" class="btn btn-primary" />
             <f:link.action action="list" class="btn btn-secondary">Cancel</f:link.action>

@@ -1,4 +1,6 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:blog="http://typo3.org/ns/NitsanAi/MyBlog/ViewHelpers"
+      data-namespace-typo3-fluid="true">
 
 <div class="container mt-4">
     <div class="card">
@@ -9,10 +11,120 @@
         </f:if>
         <div class="card-body">
             <h2 class="card-title">{post.title}</h2>
-            <p class="card-subtitle mb-3 text-muted">By {post.author}</p>
-            <div class="card-text">
-                <f:format.nl2br>{post.description}</f:format.nl2br>
+            <div class="d-flex flex-wrap gap-3 align-items-center mb-3 text-muted">
+                <span>👤 <strong><f:if condition="{post.feUser}"><f:then>{post.feUser.name -> f:or(alternative: post.feUser.username)}</f:then><f:else>{post.author}</f:else></f:if></strong></span>
+                <f:if condition="{post.crdate}">
+                    <span>📅 Created: <f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></span>
+                </f:if>
+                <f:if condition="{blog:hasBeenEdited(created: post.crdate, updated: post.tstamp)}">
+                    <span>✏️ Edited: <f:format.date format="d M Y, H:i">{post.tstamp}</f:format.date></span>
+                </f:if>
+                <span>⏱️ {post.readingTime} min read</span>
+                <span>👁️ {post.views} views</span>
             </div>
+            <f:if condition="{post.categories}">
+                <div class="mb-3">
+                    <f:for each="{post.categories}" as="category">
+                        <span class="badge bg-primary me-1">{category.title}</span>
+                    </f:for>
+                </div>
+            </f:if>
+            <div class="card-text">
+                <f:format.html>{post.description}</f:format.html>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="mt-5">
+                <h4 class="mb-4">💬 {blog:commentCount(comments: comments)}</h4>
+
+                <f:flashMessages />
+
+                <!-- Comments List -->
+                <f:if condition="{comments}">
+                    <f:then>
+                        <div class="list-group mb-4">
+                            <f:for each="{paginatedComments}" as="comment">
+                                <div class="list-group-item list-group-item-action flex-column align-items-start mb-2 rounded border">
+                                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-1 text-primary">👤 {comment.authorName}</h6>
+                                        <f:if condition="{comment.crdate}">
+                                            <small class="text-muted"><f:format.date format="d M Y, H:i">{comment.crdate}</f:format.date></small>
+                                        </f:if>
+                                    </div>
+                                    <p class="mb-1">{comment.content -> f:format.nl2br()}</p>
+                                </div>
+                            </f:for>
+                        </div>
+                        <f:if condition="{commentPagination.lastPageNumber} > 1">
+                            <nav aria-label="Comment pagination" class="mb-4">
+                                <ul class="pagination mb-0">
+                                    <li class="page-item {f:if(condition: commentPagination.previousPageNumber, else: 'disabled')}">
+                                        <f:if condition="{commentPagination.previousPageNumber}">
+                                            <f:then><f:link.action action="show" arguments="{post: post, currentPage: commentPagination.previousPageNumber}" class="page-link">Previous</f:link.action></f:then>
+                                            <f:else><span class="page-link">Previous</span></f:else>
+                                        </f:if>
+                                    </li>
+                                    <f:for each="{commentPagination.allPageNumbers}" as="pageNumber">
+                                        <li class="page-item {f:if(condition: '{pageNumber} == {commentPagination.paginator.currentPageNumber}', then: 'active')}">
+                                            <f:link.action action="show" arguments="{post: post, currentPage: pageNumber}" class="page-link">{pageNumber}</f:link.action>
+                                        </li>
+                                    </f:for>
+                                    <li class="page-item {f:if(condition: commentPagination.nextPageNumber, else: 'disabled')}">
+                                        <f:if condition="{commentPagination.nextPageNumber}">
+                                            <f:then><f:link.action action="show" arguments="{post: post, currentPage: commentPagination.nextPageNumber}" class="page-link">Next</f:link.action></f:then>
+                                            <f:else><span class="page-link">Next</span></f:else>
+                                        </f:if>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </f:if>
+                    </f:then>
+                    <f:else>
+                        <p class="text-muted italic mb-4">No comments yet. Be the first to comment!</p>
+                    </f:else>
+                </f:if>
+
+                <!-- Leave a Comment Form / Status -->
+                <f:if condition="{post.allowComments}">
+                    <f:then>
+                        <f:security.ifAuthenticated>
+                            <f:then>
+                                <div class="card bg-light p-4 border">
+                                    <h5 class="card-title mb-3">Leave a Comment</h5>
+                                    <f:form action="addComment" name="newComment" object="{newComment}" arguments="{post: post}">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="comment-author" class="form-label">Your Name <span class="text-danger">*</span></label>
+                                                <f:form.textfield property="authorName" id="comment-author" value="{loggedInUser.name -> f:or(alternative: loggedInUser.username)}" readonly="readonly" required="true" class="form-control bg-light" />
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="comment-email" class="form-label">Your Email <span class="text-danger">*</span></label>
+                                                <f:form.textfield property="authorEmail" id="comment-email" type="email" value="{loggedInUser.email}" readonly="readonly" required="true" class="form-control bg-light" />
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="comment-content" class="form-label">Comment <span class="text-danger">*</span></label>
+                                            <f:form.textarea property="content" id="comment-content" rows="4" required="true" class="form-control" placeholder="Write your comment here..." />
+                                        </div>
+                                        <f:form.submit value="Submit Comment" class="btn btn-primary" />
+                                    </f:form>
+                                </div>
+                            </f:then>
+                            <f:else>
+                                <div class="alert alert-info text-center mb-0">
+                                    Please <f:link.page pageUid="{settings.loginPageUid}" class="alert-link">log in</f:link.page> to leave a comment.
+                                </div>
+                            </f:else>
+                        </f:security.ifAuthenticated>
+                    </f:then>
+                    <f:else>
+                        <div class="alert alert-secondary text-center mb-0">
+                            🔒 Comments are disabled for this blog post.
+                        </div>
+                    </f:else>
+                </f:if>
+            </div>
+
             <div class="mt-4">
                 <f:link.action action="list" class="btn btn-secondary">← Back to Posts</f:link.action>
             </div>
