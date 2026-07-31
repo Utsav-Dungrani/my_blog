@@ -9,7 +9,3 @@ page {
     }
 }
 
-# Allow FE users to be found in PID 29
-plugin.tx_felogin_pi1.storagePid = 29
-styles.content.loginform.pid = 29
-plugin.tx_myblog_blogplugin.persistence.storagePid = 29
