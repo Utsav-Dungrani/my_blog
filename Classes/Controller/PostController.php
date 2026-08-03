@@ -86,7 +86,8 @@ class PostController extends ActionController
 
     public function listAction(?Category $selectedCategory = null, bool $showAll = false, bool $myPosts = false): ResponseInterface
     {
-        $postsPerPage = (int)($this->settings['postsPerPage'] ?? 0);
+        $originalPostsPerPage = (int)($this->settings['postsPerPage'] ?? 0);
+        $postsPerPage = $showAll ? 0 : $originalPostsPerPage;
         $configuredCategoryUids = GeneralUtility::intExplode(',', (string)($this->settings['filterCategories'] ?? ''), true);
         $categories = $configuredCategoryUids === []
             ? $this->categoryRepository->findAll()
@@ -124,6 +125,7 @@ class PostController extends ActionController
             $posts = $this->postRepository->findAllLimited($postsPerPage, $authorFilter);
         }
 
+        $this->view->assign('showSeeAllButton', !$showAll && $originalPostsPerPage > 0 && count($posts) >= $originalPostsPerPage);
         $this->view->assign('myPostsActive', $myPosts);
 
         $this->view->assign('posts', $posts);

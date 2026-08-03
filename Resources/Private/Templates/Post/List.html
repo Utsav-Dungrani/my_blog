@@ -111,6 +111,12 @@
                     </div>
                 </f:else>
             </f:if>
+
+            <f:if condition="{showSeeAllButton}">
+                <div class="mt-5 text-center">
+                    <f:link.action action="list" arguments="{showAll: 1}" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm">See All Posts</f:link.action>
+                </div>
+            </f:if>
         </f:then>
         <f:else>
             <div class="alert alert-info">No blog posts found.</div>

@@ -25,8 +25,8 @@ final class AuthController extends ActionController
         $username = trim($username);
         $name = trim($name);
         $email = trim($email);
-        if ($username === '' || $name === '' || !filter_var($email, \FILTER_VALIDATE_EMAIL) || strlen($password) < 12 || $password !== $passwordConfirmation) {
-            $this->addFlashMessage('Enter a name, a valid email, and matching passwords of at least 12 characters.', '', ContextualFeedbackSeverity::ERROR);
+        if ($username === '' || $name === '' || !filter_var($email, \FILTER_VALIDATE_EMAIL) || strlen($password) < 8 || $password !== $passwordConfirmation) {
+            $this->addFlashMessage('Enter a name, a valid email, and matching passwords of at least 8 characters.', '', ContextualFeedbackSeverity::ERROR);
             return $this->redirect('register');
         }
         if ($this->frontendUserRepository->findOneByUsername($username) !== null || $this->frontendUserRepository->findOneByEmail($email) !== null) {

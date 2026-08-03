@@ -21,7 +21,7 @@ final class CommentCountViewHelper extends AbstractViewHelper
     public function render(): string
     {
         $comments = $this->arguments['comments'];
-        $count = $comments instanceof Countable ? count($comments) : 0;
+        $count = is_countable($comments) ? count($comments) : 0;
 
         return match ($count) {
             0 => 'No comments',
