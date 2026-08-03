@@ -2,6 +2,8 @@
 
 namespace NitsanAi\MyBlog\Domain\Model;
 
+use NitsanAi\MyBlog\Domain\Model\Post;
+use NitsanAi\MyBlog\Domain\Model\FrontendUser;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class Comment extends AbstractEntity

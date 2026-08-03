@@ -2,7 +2,9 @@
 
 namespace NitsanAi\MyBlog\Domain\Model;
 
+use NitsanAi\MyBlog\Domain\Model\Comment;
 use TYPO3\CMS\Extbase\Domain\Model\Category;
+use NitsanAi\MyBlog\Domain\Model\FrontendUser;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
