@@ -54,6 +54,13 @@
                             </items>
                         </config>
                     </settings.listItemsPerRow>
+                    <settings.showCategoryFilter>
+                        <label>Show category filter</label>
+                        <config>
+                            <type>check</type>
+                            <default>1</default>
+                        </config>
+                    </settings.showCategoryFilter>
                     <settings.filterCategories>
                         <label>Categories available in filter</label>
                         <description>Select categories to limit the displayed posts and frontend filter. Leave empty to use all categories.</description>
@@ -84,13 +91,6 @@
                             <maxitems>1</maxitems>
                         </config>
                     </settings.defaultCategory>
-                    <settings.showCategoryFilter>
-                        <label>Show category filter</label>
-                        <config>
-                            <type>check</type>
-                            <default>1</default>
-                        </config>
-                    </settings.showCategoryFilter>
                     <settings.postsPerPage>
                         <label>Posts per page</label>
                         <description>Leave empty or use 0 to display all posts.</description>

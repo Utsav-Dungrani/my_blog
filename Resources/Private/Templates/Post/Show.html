@@ -87,12 +87,12 @@
                 <!-- Leave a Comment Form / Status -->
                 <f:if condition="{post.allowComments}">
                     <f:then>
-                        <f:security.ifAuthenticated>
-                            <f:then>
-                                <div class="card bg-light p-4 border">
-                                    <h5 class="card-title mb-3">Leave a Comment</h5>
-                                    <f:form action="addComment" name="newComment" object="{newComment}" arguments="{post: post}">
-                                        <div class="row">
+                        <div class="card bg-light p-4 border">
+                            <h5 class="card-title mb-3">Leave a Comment</h5>
+                            <f:form action="addComment" name="newComment" object="{newComment}" arguments="{post: post}">
+                                <div class="row">
+                                    <f:security.ifAuthenticated>
+                                        <f:then>
                                             <div class="col-md-6 mb-3">
                                                 <label for="comment-author" class="form-label">Your Name <span class="text-danger">*</span></label>
                                                 <f:form.textfield property="authorName" id="comment-author" value="{loggedInUser.name -> f:or(alternative: loggedInUser.username)}" readonly="readonly" required="true" class="form-control bg-light" />
@@ -101,21 +101,26 @@
                                                 <label for="comment-email" class="form-label">Your Email <span class="text-danger">*</span></label>
                                                 <f:form.textfield property="authorEmail" id="comment-email" type="email" value="{loggedInUser.email}" readonly="readonly" required="true" class="form-control bg-light" />
                                             </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="comment-content" class="form-label">Comment <span class="text-danger">*</span></label>
-                                            <f:form.textarea property="content" id="comment-content" rows="4" required="true" class="form-control" placeholder="Write your comment here..." />
-                                        </div>
-                                        <f:form.submit value="Submit Comment" class="btn btn-primary" />
-                                    </f:form>
+                                        </f:then>
+                                        <f:else>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="comment-author" class="form-label">Your Name <span class="text-danger">*</span></label>
+                                                <f:form.textfield property="authorName" id="comment-author" required="true" class="form-control" placeholder="Enter your name" />
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="comment-email" class="form-label">Your Email <span class="text-danger">*</span></label>
+                                                <f:form.textfield property="authorEmail" id="comment-email" type="email" required="true" class="form-control" placeholder="Enter your email" />
+                                            </div>
+                                        </f:else>
+                                    </f:security.ifAuthenticated>
                                 </div>
-                            </f:then>
-                            <f:else>
-                                <div class="alert alert-info text-center mb-0">
-                                    Please <f:link.page pageUid="{settings.loginPageUid}" class="alert-link">log in</f:link.page> to leave a comment.
+                                <div class="mb-3">
+                                    <label for="comment-content" class="form-label">Comment <span class="text-danger">*</span></label>
+                                    <f:form.textarea property="content" id="comment-content" rows="4" required="true" class="form-control" placeholder="Write your comment here..." />
                                 </div>
-                            </f:else>
-                        </f:security.ifAuthenticated>
+                                <f:form.submit value="Submit Comment" class="btn btn-primary" />
+                            </f:form>
+                        </div>
                     </f:then>
                     <f:else>
                         <div class="alert alert-secondary text-center mb-0">

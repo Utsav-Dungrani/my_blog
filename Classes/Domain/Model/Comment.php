@@ -14,6 +14,8 @@ class Comment extends AbstractEntity
 
     protected string $content = '';
 
+    protected bool $approved = false;
+
     protected ?FrontendUser $feUser = null;
 
     protected ?\DateTime $crdate = null;
@@ -78,5 +80,15 @@ class Comment extends AbstractEntity
     public function setFeUser(?FrontendUser $feUser): void
     {
         $this->feUser = $feUser;
+    }
+
+    public function getApproved(): bool
+    {
+        return $this->approved;
+    }
+
+    public function setApproved(bool $approved): void
+    {
+        $this->approved = $approved;
     }
 }

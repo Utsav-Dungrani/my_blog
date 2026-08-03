@@ -168,6 +168,14 @@ class Post extends AbstractEntity
         return $this->comments;
     }
 
+    public function getApprovedComments(): array
+    {
+        return array_values(array_filter(
+            $this->getComments()->toArray(),
+            fn (Comment $comment) => $comment->getApproved()
+        ));
+    }
+
     public function setComments(ObjectStorage $comments): void
     {
         $this->comments = $comments;

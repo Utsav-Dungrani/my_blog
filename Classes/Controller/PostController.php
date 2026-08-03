@@ -84,10 +84,12 @@ class PostController extends ActionController
         }
     }
 
-    public function listAction(?Category $selectedCategory = null, bool $showAll = false, bool $myPosts = false): ResponseInterface
+    public function listAction(?Category $selectedCategory = null, bool $myPosts = false, string $sortBy = 'newest', bool $commentedByMe = false, int $currentPage = 1): ResponseInterface
     {
-        $originalPostsPerPage = (int)($this->settings['postsPerPage'] ?? 0);
-        $postsPerPage = $showAll ? 0 : $originalPostsPerPage;
+        $postsPerPage = (int)($this->settings['postsPerPage'] ?? 10);
+        if ($postsPerPage <= 0) {
+            $postsPerPage = 10;
+        }
         $configuredCategoryUids = GeneralUtility::intExplode(',', (string)($this->settings['filterCategories'] ?? ''), true);
         $categories = $configuredCategoryUids === []
             ? $this->categoryRepository->findAll()
@@ -101,9 +103,9 @@ class PostController extends ActionController
         if ($selectedCategory !== null && !in_array($selectedCategory->getUid(), $allowedCategoryUids, true)) {
             $selectedCategory = null;
         }
-        if ($selectedCategory === null && !$showAll) {
+        if ($selectedCategory === null) {
             $defaultCategoryUid = (int)($this->settings['defaultCategory'] ?? 0);
-            if ($defaultCategoryUid > 0 && in_array($defaultCategoryUid, $allowedCategoryUids, true)) {
+            if ($defaultCategoryUid > 0) {
                 $selectedCategory = $this->categoryRepository->findByUid($defaultCategoryUid);
             }
         }
@@ -117,18 +119,81 @@ class PostController extends ActionController
             $authorFilter = $this->frontendUserRepository->findByUid($feUserUid);
         }
 
-        if ($selectedCategory !== null) {
-            $posts = $this->postRepository->findByCategory($selectedCategory, $postsPerPage, $authorFilter);
-        } elseif ($configuredCategoryUids !== []) {
-            $posts = $this->postRepository->findByCategories($categories->toArray(), $postsPerPage, $authorFilter);
-        } else {
-            $posts = $this->postRepository->findAllLimited($postsPerPage, $authorFilter);
+        $commentedPostUids = null;
+        if ($commentedByMe && $feUserUid > 0) {
+            $queryBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)->getQueryBuilderForTable('tx_myblog_domain_model_comment');
+            $uids = $queryBuilder->select('post')
+                ->from('tx_myblog_domain_model_comment')
+                ->where(
+                    $queryBuilder->expr()->eq('fe_user', $queryBuilder->createNamedParameter($feUserUid, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)),
+                    $queryBuilder->expr()->eq('approved', $queryBuilder->createNamedParameter(1, \TYPO3\CMS\Core\Database\Connection::PARAM_INT))
+                )
+                ->executeQuery()
+                ->fetchFirstColumn();
+            
+            $commentedPostUids = empty($uids) ? [-1] : array_map('intval', $uids);
         }
 
-        $this->view->assign('showSeeAllButton', !$showAll && $originalPostsPerPage > 0 && count($posts) >= $originalPostsPerPage);
-        $this->view->assign('myPostsActive', $myPosts);
+        // Fetch all matching posts without limit so we can sort and paginate in PHP
+        if ($selectedCategory !== null) {
+            $posts = $this->postRepository->findByCategory($selectedCategory, 0, $authorFilter, $sortBy, $commentedPostUids);
+        } elseif ($configuredCategoryUids !== []) {
+            $posts = $this->postRepository->findByCategories($categories->toArray(), 0, $authorFilter, $sortBy, $commentedPostUids);
+        } else {
+            $posts = $this->postRepository->findAllLimited(0, $authorFilter, $sortBy, $commentedPostUids);
+        }
 
-        $this->view->assign('posts', $posts);
+        $postsArray = $posts->toArray();
+
+        if (in_array($sortBy, ['comments_desc', 'comments_asc', 'community_desc', 'public_desc'], true)) {
+            usort($postsArray, function (Post $a, Post $b) use ($sortBy) {
+                $aApproved = 0; $aRegistered = 0; $aGuest = 0;
+                foreach ($a->getComments() as $c) {
+                    if ($c->getApproved()) {
+                        $aApproved++;
+                        if ($c->getFeUser() !== null) { $aRegistered++; } else { $aGuest++; }
+                    }
+                }
+                
+                $bApproved = 0; $bRegistered = 0; $bGuest = 0;
+                foreach ($b->getComments() as $c) {
+                    if ($c->getApproved()) {
+                        $bApproved++;
+                        if ($c->getFeUser() !== null) { $bRegistered++; } else { $bGuest++; }
+                    }
+                }
+                
+                $valA = 0; $valB = 0;
+                if ($sortBy === 'comments_desc' || $sortBy === 'comments_asc') {
+                    $valA = $aApproved; $valB = $bApproved;
+                } elseif ($sortBy === 'community_desc') {
+                    $valA = $aRegistered; $valB = $bRegistered;
+                } elseif ($sortBy === 'public_desc') {
+                    $valA = $aGuest; $valB = $bGuest;
+                }
+                
+                if ($valA === $valB) {
+                    return ($b->getCrdate() ?? new \DateTime()) <=> ($a->getCrdate() ?? new \DateTime());
+                }
+                
+                if ($sortBy === 'comments_asc') {
+                    return $valA <=> $valB;
+                }
+                return $valB <=> $valA;
+            });
+        }
+
+        $paginator = new \TYPO3\CMS\Core\Pagination\ArrayPaginator($postsArray, $currentPage, $postsPerPage);
+        $pagination = new \TYPO3\CMS\Core\Pagination\SimplePagination($paginator);
+
+        $this->view->assign('paginator', $paginator);
+        $this->view->assign('pagination', $pagination);
+        $this->view->assign('posts', $paginator->getPaginatedItems());
+
+        $this->view->assign('myPostsActive', $myPosts);
+        $this->view->assign('commentedByMeActive', $commentedByMe);
+        $this->view->assign('currentSortBy', $sortBy);
+        
         $this->view->assign('categories', $categories);
         $this->view->assign('selectedCategory', $selectedCategory);
         $this->view->assign('showCategoryFilter', (bool)($this->settings['showCategoryFilter'] ?? true));
@@ -154,7 +219,7 @@ class PostController extends ActionController
         $this->postRepository->update($post);
         GeneralUtility::makeInstance(PersistenceManagerInterface::class)->persistAll();
 
-        $comments = $post->getComments()->toArray();
+        $comments = $post->getApprovedComments();
         usort(
             $comments,
             static fn (Comment $first, Comment $second): int => ($second->getCrdate()?->getTimestamp() ?? 0)
@@ -370,6 +435,14 @@ class PostController extends ActionController
                 'pid' => $post->getPid() > 0 ? $post->getPid() : 0,
             ]);
 
+            // Delete old image reference from DB to prevent conflicts
+            if ($post->getImage() !== null && $post->getImage()->getUid() > 0) {
+                $queryBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)->getQueryBuilderForTable('sys_file_reference');
+                $queryBuilder->delete('sys_file_reference')
+                    ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($post->getImage()->getUid(), \TYPO3\CMS\Core\Database\Connection::PARAM_INT)))
+                    ->executeStatement();
+            }
+
             $extbaseFileReference = GeneralUtility::makeInstance(ExtbaseFileReference::class);
             $extbaseFileReference->setOriginalResource($fileReferenceObject);
             $post->setImage($extbaseFileReference);
@@ -379,9 +452,15 @@ class PostController extends ActionController
     public function addCommentAction(Post $post, Comment $newComment): ResponseInterface
     {
         $context = GeneralUtility::makeInstance(Context::class);
-        if (!$context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
-            $this->addFlashMessage('You must be logged in to leave a comment.', '', ContextualFeedbackSeverity::ERROR);
-            return $this->redirect('show', null, null, ['post' => $post]);
+        $isLoggedIn = $context->getPropertyFromAspect('frontend.user', 'isLoggedIn');
+        if ($isLoggedIn) {
+            $feUserUid = $context->getPropertyFromAspect('frontend.user', 'id');
+            $loggedInUser = $this->frontendUserRepository->findByUid($feUserUid);
+            if ($loggedInUser) {
+                $newComment->setAuthorName($loggedInUser->getName() ?: $loggedInUser->getUsername());
+                $newComment->setAuthorEmail($loggedInUser->getEmail());
+                $newComment->setFeUser($loggedInUser);
+            }
         }
 
         if (!$post->getAllowComments()) {
@@ -400,13 +479,14 @@ class PostController extends ActionController
             $newComment->setPid($post->getPid());
         }
 
+        $newComment->setApproved(false);
         $post->addComment($newComment);
         $this->commentRepository->add($newComment);
         $this->postRepository->update($post);
 
         GeneralUtility::makeInstance(PersistenceManagerInterface::class)->persistAll();
 
-        $this->addFlashMessage('Thank you for your comment!');
+        $this->addFlashMessage('Your comment has been submitted and is awaiting moderation.');
         return $this->redirect('show', null, null, ['post' => $post]);
     }
 

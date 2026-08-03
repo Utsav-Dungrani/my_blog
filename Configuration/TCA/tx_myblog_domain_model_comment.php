@@ -16,9 +16,17 @@ return [
         'iconfile' => 'EXT:my_blog/Resources/Public/Icons/Extension.svg',
     ],
     'types' => [
-        '1' => ['showitem' => 'author_name, author_email, content, fe_user, post, crdate'],
+        '1' => ['showitem' => 'approved, author_name, author_email, content, fe_user, post, crdate'],
     ],
     'columns' => [
+        'approved' => [
+            'label' => 'Comment Approved',
+            'config' => [
+                'type' => 'check',
+                'renderType' => 'checkboxToggle',
+                'default' => 0,
+            ],
+        ],
         'author_name' => [
             'label' => 'Author Name',
             'config' => [
