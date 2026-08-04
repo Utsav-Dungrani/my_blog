@@ -121,67 +121,16 @@ class PostController extends ActionController
 
         $commentedPostUids = null;
         if ($commentedByMe && $feUserUid > 0) {
-            $queryBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)->getQueryBuilderForTable('tx_myblog_domain_model_comment');
-            $uids = $queryBuilder->select('post')
-                ->from('tx_myblog_domain_model_comment')
-                ->where(
-                    $queryBuilder->expr()->eq('fe_user', $queryBuilder->createNamedParameter($feUserUid, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)),
-                    $queryBuilder->expr()->eq('approved', $queryBuilder->createNamedParameter(1, \TYPO3\CMS\Core\Database\Connection::PARAM_INT))
-                )
-                ->executeQuery()
-                ->fetchFirstColumn();
-            
-            $commentedPostUids = empty($uids) ? [-1] : array_map('intval', $uids);
+            $commentedPostUids = $this->commentRepository->findPostUidsCommentedBy($feUserUid);
         }
 
-        // Fetch all matching posts without limit so we can sort and paginate in PHP
-        if ($selectedCategory !== null) {
-            $posts = $this->postRepository->findByCategory($selectedCategory, 0, $authorFilter, $sortBy, $commentedPostUids);
-        } elseif ($configuredCategoryUids !== []) {
-            $posts = $this->postRepository->findByCategories($categories->toArray(), 0, $authorFilter, $sortBy, $commentedPostUids);
-        } else {
-            $posts = $this->postRepository->findAllLimited(0, $authorFilter, $sortBy, $commentedPostUids);
-        }
-
-        $postsArray = $posts->toArray();
-
-        if (in_array($sortBy, ['comments_desc', 'comments_asc', 'community_desc', 'public_desc'], true)) {
-            usort($postsArray, function (Post $a, Post $b) use ($sortBy) {
-                $aApproved = 0; $aRegistered = 0; $aGuest = 0;
-                foreach ($a->getComments() as $c) {
-                    if ($c->getApproved()) {
-                        $aApproved++;
-                        if ($c->getFeUser() !== null) { $aRegistered++; } else { $aGuest++; }
-                    }
-                }
-                
-                $bApproved = 0; $bRegistered = 0; $bGuest = 0;
-                foreach ($b->getComments() as $c) {
-                    if ($c->getApproved()) {
-                        $bApproved++;
-                        if ($c->getFeUser() !== null) { $bRegistered++; } else { $bGuest++; }
-                    }
-                }
-                
-                $valA = 0; $valB = 0;
-                if ($sortBy === 'comments_desc' || $sortBy === 'comments_asc') {
-                    $valA = $aApproved; $valB = $bApproved;
-                } elseif ($sortBy === 'community_desc') {
-                    $valA = $aRegistered; $valB = $bRegistered;
-                } elseif ($sortBy === 'public_desc') {
-                    $valA = $aGuest; $valB = $bGuest;
-                }
-                
-                if ($valA === $valB) {
-                    return ($b->getCrdate() ?? new \DateTime()) <=> ($a->getCrdate() ?? new \DateTime());
-                }
-                
-                if ($sortBy === 'comments_asc') {
-                    return $valA <=> $valB;
-                }
-                return $valB <=> $valA;
-            });
-        }
+        $postsArray = $this->postRepository->findPostsFilteredAndSorted(
+            $selectedCategory,
+            $configuredCategoryUids !== [] ? $categories->toArray() : [],
+            $authorFilter,
+            $sortBy,
+            $commentedPostUids
+        );
 
         $paginator = new \TYPO3\CMS\Core\Pagination\ArrayPaginator($postsArray, $currentPage, $postsPerPage);
         $pagination = new \TYPO3\CMS\Core\Pagination\SimplePagination($paginator);
@@ -436,11 +385,8 @@ class PostController extends ActionController
             ]);
 
             // Delete old image reference from DB to prevent conflicts
-            if ($post->getImage() !== null && $post->getImage()->getUid() > 0) {
-                $queryBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)->getQueryBuilderForTable('sys_file_reference');
-                $queryBuilder->delete('sys_file_reference')
-                    ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($post->getImage()->getUid(), \TYPO3\CMS\Core\Database\Connection::PARAM_INT)))
-                    ->executeStatement();
+            if ($post->getUid() > 0) {
+                $this->postRepository->removeImageReferencesForPost($post->getUid());
             }
 
             $extbaseFileReference = GeneralUtility::makeInstance(ExtbaseFileReference::class);

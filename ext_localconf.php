@@ -23,9 +23,3 @@ ExtensionUtility::configurePlugin(
         \NitsanAi\MyBlog\Controller\AuthController::class => 'register, createAccount',
     ]
 );
-
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_myblog_blog[sortBy]';
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_myblog_blog[myPosts]';
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_myblog_blog[commentedByMe]';
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_myblog_blog[selectedCategory]';
-$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_myblog_blog[showAll]';
