@@ -64,11 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 if (newContainer) {
                     container.innerHTML = newContainer.innerHTML;
-                    
-                    if (!options.method || options.method === 'GET') {
-                        window.history.pushState(null, '', url);
-                    }
-                    
+
                     attachAjaxEvents();
                     
                     const rect = container.getBoundingClientRect();
