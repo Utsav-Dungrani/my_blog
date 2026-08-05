@@ -16,7 +16,7 @@ return [
         'iconfile' => 'EXT:my_blog/Resources/Public/Icons/Extension.svg',
     ],
     'types' => [
-        '1' => ['showitem' => 'title, image, description, author, fe_user, reading_time, allow_comments, views, categories, comments, crdate, tstamp'],
+        '1' => ['showitem' => 'title, slug, image, description, author, fe_user, reading_time, allow_comments, views, categories, comments, crdate, tstamp'],
     ],
     'columns' => [
         'title' => [
@@ -26,6 +26,22 @@ return [
                 'size' => 30,
                 'eval' => 'trim',
                 'required' => true,
+            ],
+        ],
+        'slug' => [
+            'label' => 'URL Segment (slug)',
+            'config' => [
+                'type' => 'slug',
+                'generatorOptions' => [
+                    'fields' => ['title'],
+                    'fieldSeparator' => '-',
+                    'prefixParentPageSlug' => true,
+                    'replacements' => [
+                        '/' => '-',
+                    ],
+                ],
+                'fallbackCharacter' => '-',
+                'eval' => 'uniqueInSite',
             ],
         ],
         'image' => [
@@ -100,7 +116,6 @@ return [
             'label' => 'Categories',
             'config' => [
                 'type' => 'category',
-                'required' => true,
             ],
         ],
         'comments' => [
@@ -130,6 +145,30 @@ return [
                 'type' => 'datetime',
                 'format' => 'datetime',
                 'readOnly' => true,
+            ],
+        ],
+        'comment_count_total' => [
+            'label' => 'Total Comments',
+            'config' => [
+                'type' => 'number',
+                'readOnly' => true,
+                'default' => 0,
+            ],
+        ],
+        'comment_count_registered' => [
+            'label' => 'Registered User Comments',
+            'config' => [
+                'type' => 'number',
+                'readOnly' => true,
+                'default' => 0,
+            ],
+        ],
+        'comment_count_guest' => [
+            'label' => 'Guest Comments',
+            'config' => [
+                'type' => 'number',
+                'readOnly' => true,
+                'default' => 0,
             ],
         ],
     ],

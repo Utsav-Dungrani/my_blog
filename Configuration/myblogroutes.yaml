@@ -1,0 +1,28 @@
+routeEnhancers:
+  MyBlogPlugin:
+    type: Extbase
+    extension: MyBlog
+    plugin: BlogPlugin
+    routes:
+      - routePath: '/'
+        _controller: 'Post::list'
+      - routePath: '/new'
+        _controller: 'Post::new'
+      - routePath: '/detail/{post_slug}'
+        _controller: 'Post::show'
+        _arguments:
+          post_slug: post
+      - routePath: '/edit/{post_slug}'
+        _controller: 'Post::edit'
+        _arguments:
+          post_slug: post
+      - routePath: '/delete/{post_slug}'
+        _controller: 'Post::delete'
+        _arguments:
+          post_slug: post
+    defaultController: 'Post::list'
+    aspects:
+      post_slug:
+        type: PersistedAliasMapper
+        tableName: tx_myblog_domain_model_post
+        routeFieldName: slug

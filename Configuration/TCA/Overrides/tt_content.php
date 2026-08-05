@@ -8,17 +8,19 @@ $contentType = ExtensionUtility::registerPlugin(
     'MyBlog',
     'BlogPlugin',
     'Blog Posts Display & Management',
-    'EXT:core/Resources/Public/Icons/T3icons/content/content-text.svg'
+    'EXT:core/Resources/Public/Icons/Extension.svg',
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
 
 ExtensionManagementUtility::addPiFlexFormValue(
-    $contentType,
-    'FILE:EXT:my_blog/Configuration/FlexForms/BlogPlugin.xml'
+    '*',
+    'FILE:EXT:my_blog/Configuration/FlexForms/BlogPlugin.xml',
+    $contentType
 );
 
 ExtensionManagementUtility::addToAllTCAtypes(
     'tt_content',
     'pi_flexform',
-    'list',
-    'after:list_type'
+    $contentType,
+    'after:header'
 );

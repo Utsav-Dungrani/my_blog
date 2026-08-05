@@ -21,11 +21,11 @@
 
     <f:flashMessages />
 
-    <f:if condition="{showCategoryFilter} && {categories}">
-        <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <f:if condition="{showCategoryFilter} && {categories}">
             <div aria-label="Filter blog posts by category">
                 <span class="me-2 fw-semibold">Filter by:</span>
-                <f:link.action action="list" arguments="{sortBy: currentSortBy}" class="btn btn-sm {f:if(condition: '{selectedCategory} || {myPostsActive} || {commentedByMeActive}', then: 'btn-outline-success', else: 'btn-success')}">All Posts</f:link.action>
+                <f:link.action action="list" arguments="{sortBy: currentSortBy, showAll: 1}" class="btn btn-sm {f:if(condition: '{selectedCategory} || {myPostsActive} || {commentedByMeActive}', then: 'btn-outline-success', else: 'btn-success')}">All Posts</f:link.action>
                 
                 <f:security.ifAuthenticated>
                     <f:link.action action="list" arguments="{myPosts: 1, sortBy: currentSortBy}" class="btn btn-sm {f:if(condition: myPostsActive, then: 'btn-success', else: 'btn-outline-success')}">My Posts</f:link.action>
@@ -44,30 +44,32 @@
                     </f:if>
                 </f:for>
             </div>
-            <div>
-                <f:form action="list" method="post" class="d-flex align-items-center gap-2">
-                    <f:if condition="{selectedCategory}"><f:form.hidden name="selectedCategory" value="{selectedCategory}" /></f:if>
-                    <f:if condition="{myPostsActive}"><f:form.hidden name="myPosts" value="1" /></f:if>
-                    <f:if condition="{commentedByMeActive}"><f:form.hidden name="commentedByMe" value="1" /></f:if>
-                    
-                    <label for="sortBy" class="fw-semibold text-nowrap mb-0">Sort by:</label>
-                    <f:form.select name="sortBy" id="sortBy" class="form-select form-select-sm" value="{currentSortBy}" onchange="this.form.submit()"
-                        options="{
-                            newest: 'Newest First', 
-                            oldest: 'Oldest First', 
-                            views_desc: 'Most Viewed', 
-                            views_asc: 'Least Viewed',
-                            comments_desc: 'Most Commented (Total)',
-                            comments_asc: 'Least Commented',
-                            community_desc: 'Most Commented (Registered)',
-                            public_desc: 'Most Commented (Guests)',
-                            reading_desc: 'Longest Read',
-                            reading_asc: 'Shortest Read'
-                        }" />
-                </f:form>
-            </div>
+        </f:if>
+        
+        <div class="ms-auto">
+            <f:form action="list" method="post" class="d-flex align-items-center gap-2">
+                <f:if condition="{selectedCategory}"><f:form.hidden name="selectedCategory" value="{selectedCategory}" /></f:if>
+                <f:if condition="{myPostsActive}"><f:form.hidden name="myPosts" value="1" /></f:if>
+                <f:if condition="{commentedByMeActive}"><f:form.hidden name="commentedByMe" value="1" /></f:if>
+                <f:if condition="{showAllActive}"><f:form.hidden name="showAll" value="1" /></f:if>
+                
+                <label for="sortBy" class="fw-semibold text-nowrap mb-0">Sort by:</label>
+                <f:form.select name="sortBy" id="sortBy" class="form-select form-select-sm" value="{currentSortBy}" onchange="this.form.submit()"
+                    options="{
+                        newest: 'Newest First', 
+                        oldest: 'Oldest First', 
+                        views_desc: 'Most Viewed', 
+                        views_asc: 'Least Viewed',
+                        comments_desc: 'Most Commented (Total)',
+                        comments_asc: 'Least Commented',
+                        community_desc: 'Most Commented (Registered)',
+                        public_desc: 'Most Commented (Guests)',
+                        reading_desc: 'Longest Read',
+                        reading_asc: 'Shortest Read'
+                    }" />
+            </f:form>
         </div>
-    </f:if>
+    </div>
 
     <f:if condition="{posts}">
         <f:then>
@@ -85,7 +87,7 @@
                                     </f:if>
                                     <div class="{f:if(condition: post.image, then: 'col-md-9', else: 'col-12')}">
                                         <h5>{post.title}</h5>
-                                        <div class="text-muted small mb-2">👤 {post.author} · ⏱️ {post.readingTime} min read · 👁️ {post.views} views · 📅 Created: <f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></div>
+                                        <div class="text-muted small mb-2">👤 {post.author} · ⏱️ {post.readingTime} min read · 👁️ {post.views} views · 💬 {blog:commentCount(comments: post.approvedComments)} · 📅 Created: <f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></div>
                                         <f:if condition="{post.categories}">
                                             <div class="mb-2">
                                                 <f:for each="{post.categories}" as="category"><span class="badge bg-primary me-1">{category.title}</span></f:for>
@@ -145,19 +147,19 @@
                     <ul class="pagination justify-content-center">
                         <f:if condition="{pagination.previousPageNumber}">
                             <li class="page-item">
-                                <f:link.action action="list" arguments="{currentPage: pagination.previousPageNumber, sortBy: currentSortBy, selectedCategory: selectedCategory, myPosts: myPostsActive, commentedByMe: commentedByMeActive}" class="page-link">&laquo; Previous</f:link.action>
+                                <f:link.action action="list" arguments="{currentPage: pagination.previousPageNumber, sortBy: currentSortBy, selectedCategory: selectedCategory, myPosts: myPostsActive, commentedByMe: commentedByMeActive, showAll: showAllActive}" class="page-link">&laquo; Previous</f:link.action>
                             </li>
                         </f:if>
 
                         <f:for each="{pagination.allPageNumbers}" as="page">
                             <li class="page-item {f:if(condition: '{page} == {paginator.currentPageNumber}', then: 'active')}">
-                                <f:link.action action="list" arguments="{currentPage: page, sortBy: currentSortBy, selectedCategory: selectedCategory, myPosts: myPostsActive, commentedByMe: commentedByMeActive}" class="page-link">{page}</f:link.action>
+                                <f:link.action action="list" arguments="{currentPage: page, sortBy: currentSortBy, selectedCategory: selectedCategory, myPosts: myPostsActive, commentedByMe: commentedByMeActive, showAll: showAllActive}" class="page-link">{page}</f:link.action>
                             </li>
                         </f:for>
                         
                         <f:if condition="{pagination.nextPageNumber}">
                             <li class="page-item">
-                                <f:link.action action="list" arguments="{currentPage: pagination.nextPageNumber, sortBy: currentSortBy, selectedCategory: selectedCategory, myPosts: myPostsActive, commentedByMe: commentedByMeActive}" class="page-link">Next &raquo;</f:link.action>
+                                <f:link.action action="list" arguments="{currentPage: pagination.nextPageNumber, sortBy: currentSortBy, selectedCategory: selectedCategory, myPosts: myPostsActive, commentedByMe: commentedByMeActive, showAll: showAllActive}" class="page-link">Next &raquo;</f:link.action>
                             </li>
                         </f:if>
                     </ul>

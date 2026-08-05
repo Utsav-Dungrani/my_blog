@@ -84,7 +84,7 @@ class PostController extends ActionController
         }
     }
 
-    public function listAction(?Category $selectedCategory = null, bool $myPosts = false, string $sortBy = 'newest', bool $commentedByMe = false, int $currentPage = 1): ResponseInterface
+    public function listAction(?Category $selectedCategory = null, bool $myPosts = false, string $sortBy = 'newest', bool $commentedByMe = false, int $currentPage = 1, bool $showAll = false): ResponseInterface
     {
         $postsPerPage = (int)($this->settings['postsPerPage'] ?? 10);
         if ($postsPerPage <= 0) {
@@ -103,7 +103,7 @@ class PostController extends ActionController
         if ($selectedCategory !== null && !in_array($selectedCategory->getUid(), $allowedCategoryUids, true)) {
             $selectedCategory = null;
         }
-        if ($selectedCategory === null) {
+        if ($selectedCategory === null && !$showAll && !$myPosts && !$commentedByMe) {
             $defaultCategoryUid = (int)($this->settings['defaultCategory'] ?? 0);
             if ($defaultCategoryUid > 0) {
                 $selectedCategory = $this->categoryRepository->findByUid($defaultCategoryUid);
@@ -126,7 +126,7 @@ class PostController extends ActionController
 
         $postsArray = $this->postRepository->findPostsFilteredAndSorted(
             $selectedCategory,
-            $configuredCategoryUids !== [] ? $categories->toArray() : [],
+            $showAll ? [] : ($configuredCategoryUids !== [] ? $categories->toArray() : []),
             $authorFilter,
             $sortBy,
             $commentedPostUids
@@ -141,6 +141,7 @@ class PostController extends ActionController
 
         $this->view->assign('myPostsActive', $myPosts);
         $this->view->assign('commentedByMeActive', $commentedByMe);
+        $this->view->assign('showAllActive', $showAll);
         $this->view->assign('currentSortBy', $sortBy);
         
         $this->view->assign('categories', $categories);
@@ -232,13 +233,7 @@ class PostController extends ActionController
             return $this->htmlResponse();
         }
 
-        if ($newPost->getCategories()->count() === 0) {
-            $this->addFlashMessage('Please select at least one category.', '', ContextualFeedbackSeverity::ERROR);
-            $this->view->assign('newPost', $newPost);
-            $this->view->assign('categories', $this->categoryRepository->findAll());
-            $this->view->setTemplate('New');
-            return $this->htmlResponse();
-        }
+
 
         if ($newPost->getReadingTime() <= 0) {
             $this->addFlashMessage('Please enter a valid reading time in minutes.', '', ContextualFeedbackSeverity::ERROR);
@@ -258,6 +253,12 @@ class PostController extends ActionController
             $newPost->setPid($pageId);
         } else {
             $this->addFlashMessage('Warning: could not detect current page id; record may be stored with pid=0', '', ContextualFeedbackSeverity::WARNING);
+        }
+
+        if (empty($newPost->getSlug())) {
+            $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $newPost->getTitle()), '-'));
+            $slug .= '-' . time();
+            $newPost->setSlug($slug);
         }
 
         $this->postRepository->add($newPost);
@@ -308,13 +309,7 @@ class PostController extends ActionController
             return $this->htmlResponse();
         }
 
-        if ($post->getCategories()->count() === 0) {
-            $this->addFlashMessage('Please select at least one category.', '', ContextualFeedbackSeverity::ERROR);
-            $this->view->assign('post', $post);
-            $this->view->assign('categories', $this->categoryRepository->findAll());
-            $this->view->setTemplate('Edit');
-            return $this->htmlResponse();
-        }
+
 
         if ($post->getReadingTime() <= 0) {
             $this->addFlashMessage('Please enter a valid reading time in minutes.', '', ContextualFeedbackSeverity::ERROR);
@@ -322,6 +317,12 @@ class PostController extends ActionController
             $this->view->assign('categories', $this->categoryRepository->findAll());
             $this->view->setTemplate('Edit');
             return $this->htmlResponse();
+        }
+
+        if (empty($post->getSlug())) {
+            $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $post->getTitle()), '-'));
+            $slug .= '-' . $post->getUid();
+            $post->setSlug($slug);
         }
 
         $this->postRepository->update($post);

@@ -56,6 +56,18 @@ class PostRepository extends Repository
             case 'reading_desc':
                 $query->setOrderings(['readingTime' => QueryInterface::ORDER_DESCENDING]);
                 break;
+            case 'comments_desc':
+                $query->setOrderings(['commentCountTotal' => QueryInterface::ORDER_DESCENDING]);
+                break;
+            case 'comments_asc':
+                $query->setOrderings(['commentCountTotal' => QueryInterface::ORDER_ASCENDING]);
+                break;
+            case 'community_desc':
+                $query->setOrderings(['commentCountRegistered' => QueryInterface::ORDER_DESCENDING]);
+                break;
+            case 'public_desc':
+                $query->setOrderings(['commentCountGuest' => QueryInterface::ORDER_DESCENDING]);
+                break;
             default:
                 $query->setOrderings(['crdate' => QueryInterface::ORDER_DESCENDING]);
                 break;
@@ -183,52 +195,61 @@ class PostRepository extends Repository
 
         $postsArray = $posts->toArray();
 
-        if (in_array($sortBy, ['comments_desc', 'comments_asc', 'community_desc', 'public_desc'], true)) {
-            $postUids = array_map(fn($p) => $p->getUid(), $postsArray);
-            if (!empty($postUids)) {
-                $queryBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)
-                    ->getQueryBuilderForTable('tx_myblog_domain_model_comment');
-                
-                $queryBuilder->select('post')
-                    ->addSelectLiteral('SUM(CASE WHEN approved = 1 THEN 1 ELSE 0 END) AS count_approved')
-                    ->addSelectLiteral('SUM(CASE WHEN approved = 1 AND fe_user > 0 THEN 1 ELSE 0 END) AS count_registered')
-                    ->addSelectLiteral('SUM(CASE WHEN approved = 1 AND fe_user = 0 THEN 1 ELSE 0 END) AS count_guest')
-                    ->from('tx_myblog_domain_model_comment')
-                    ->where($queryBuilder->expr()->in('post', $queryBuilder->createNamedParameter($postUids, \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY)))
-                    ->groupBy('post');
-                
-                $counts = [];
-                $statement = $queryBuilder->executeQuery();
-                while ($row = $statement->fetchAssociative()) {
-                    $counts[$row['post']] = $row;
-                }
-                
-                usort($postsArray, function ($a, $b) use ($sortBy, $counts) {
-                    $uidA = $a->getUid(); $uidB = $b->getUid();
-                    $cA = $counts[$uidA] ?? ['count_approved' => 0, 'count_registered' => 0, 'count_guest' => 0];
-                    $cB = $counts[$uidB] ?? ['count_approved' => 0, 'count_registered' => 0, 'count_guest' => 0];
-                    
-                    $valA = 0; $valB = 0;
-                    if ($sortBy === 'comments_desc' || $sortBy === 'comments_asc') {
-                        $valA = (int)$cA['count_approved']; $valB = (int)$cB['count_approved'];
-                    } elseif ($sortBy === 'community_desc') {
-                        $valA = (int)$cA['count_registered']; $valB = (int)$cB['count_registered'];
-                    } elseif ($sortBy === 'public_desc') {
-                        $valA = (int)$cA['count_guest']; $valB = (int)$cB['count_guest'];
-                    }
-                    
-                    if ($valA === $valB) {
-                        return ($b->getCrdate() ?? new \DateTime()) <=> ($a->getCrdate() ?? new \DateTime());
-                    }
-                    
-                    if ($sortBy === 'comments_asc') {
-                        return $valA <=> $valB;
-                    }
-                    return $valB <=> $valA;
-                });
-            }
+        return $postsArray;
+    }
+
+    public function recalculateCommentCounts(int $postUid): void
+    {
+        if ($postUid <= 0) {
+            return;
         }
 
-        return $postsArray;
+        $queryBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_myblog_domain_model_comment');
+        
+        $row = $queryBuilder
+            ->addSelectLiteral('SUM(CASE WHEN approved = 1 THEN 1 ELSE 0 END) AS count_approved')
+            ->addSelectLiteral('SUM(CASE WHEN approved = 1 AND fe_user > 0 THEN 1 ELSE 0 END) AS count_registered')
+            ->addSelectLiteral('SUM(CASE WHEN approved = 1 AND fe_user = 0 THEN 1 ELSE 0 END) AS count_guest')
+            ->from('tx_myblog_domain_model_comment')
+            ->where(
+                $queryBuilder->expr()->eq('post', $queryBuilder->createNamedParameter($postUid, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)),
+                $queryBuilder->expr()->eq('deleted', 0)
+            )
+            ->executeQuery()
+            ->fetchAssociative();
+
+        if ($row) {
+            $updateBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)
+                ->getQueryBuilderForTable('tx_myblog_domain_model_post');
+            
+            $updateBuilder
+                ->update('tx_myblog_domain_model_post')
+                ->where($updateBuilder->expr()->eq('uid', $updateBuilder->createNamedParameter($postUid, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)))
+                ->set('comment_count_total', (int)$row['count_approved'])
+                ->set('comment_count_registered', (int)$row['count_registered'])
+                ->set('comment_count_guest', (int)$row['count_guest'])
+                ->executeStatement();
+        }
+    }
+
+    public function recalculateFromCommentDatabaseId(int $commentId): void
+    {
+        $queryBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_myblog_domain_model_comment');
+        
+        // Remove global restrictions so we can still find the post ID even if deleted
+        $queryBuilder->getRestrictions()->removeAll();
+
+        $comment = $queryBuilder
+            ->select('post')
+            ->from('tx_myblog_domain_model_comment')
+            ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($commentId, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)))
+            ->executeQuery()
+            ->fetchAssociative();
+
+        if ($comment && !empty($comment['post'])) {
+            $this->recalculateCommentCounts((int)$comment['post']);
+        }
     }
 }

@@ -13,6 +13,8 @@ class Post extends AbstractEntity
 {
     protected string $title = '';
 
+    protected string $slug = '';
+
     protected string $description = '';
 
     protected string $author = '';
@@ -22,6 +24,12 @@ class Post extends AbstractEntity
     protected ?FileReference $image = null;
 
     protected int $views = 0;
+
+    protected int $commentCountTotal = 0;
+
+    protected int $commentCountRegistered = 0;
+
+    protected int $commentCountGuest = 0;
 
     protected int $readingTime = 0;
 
@@ -56,6 +64,16 @@ class Post extends AbstractEntity
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
     }
 
     public function getDescription(): string
@@ -214,5 +232,34 @@ class Post extends AbstractEntity
     public function setFeUser(?FrontendUser $feUser): void
     {
         $this->feUser = $feUser;
+    }
+    public function getCommentCountTotal(): int
+    {
+        return $this->commentCountTotal;
+    }
+
+    public function setCommentCountTotal(int $commentCountTotal): void
+    {
+        $this->commentCountTotal = $commentCountTotal;
+    }
+
+    public function getCommentCountRegistered(): int
+    {
+        return $this->commentCountRegistered;
+    }
+
+    public function setCommentCountRegistered(int $commentCountRegistered): void
+    {
+        $this->commentCountRegistered = $commentCountRegistered;
+    }
+
+    public function getCommentCountGuest(): int
+    {
+        return $this->commentCountGuest;
+    }
+
+    public function setCommentCountGuest(int $commentCountGuest): void
+    {
+        $this->commentCountGuest = $commentCountGuest;
     }
 }
