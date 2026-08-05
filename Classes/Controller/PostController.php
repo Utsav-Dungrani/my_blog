@@ -164,9 +164,12 @@ class PostController extends ActionController
 
     public function showAction(Post $post, int $currentPage = 1): ResponseInterface
     {
-        $post->setViews($post->getViews() + 1);
-        $this->postRepository->update($post);
-        GeneralUtility::makeInstance(PersistenceManagerInterface::class)->persistAll();
+        $isAjax = $this->request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
+        if (!$isAjax && $currentPage === 1) {
+            $post->setViews($post->getViews() + 1);
+            $this->postRepository->update($post);
+            GeneralUtility::makeInstance(PersistenceManagerInterface::class)->persistAll();
+        }
 
         $comments = $post->getApprovedComments();
         usort(

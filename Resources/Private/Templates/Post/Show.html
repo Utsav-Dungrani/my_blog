@@ -2,7 +2,9 @@
       xmlns:blog="http://typo3.org/ns/NitsanAi/MyBlog/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<div class="container mt-4">
+<f:asset.script identifier="myBlogAjax" src="EXT:my_blog/Resources/Public/JavaScript/AjaxPagination.js" />
+
+<div class="container mt-4" id="myblog-list-container">
     <div class="card">
         <f:if condition="{post.image}">
             <f:then>

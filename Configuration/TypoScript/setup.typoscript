@@ -9,3 +9,21 @@ page {
     }
 }
 
+
+blogAjax = PAGE
+blogAjax {
+    typeNum = 99
+    config {
+        disableAllHeaderCode = 1
+        additionalHeaders.10.header = Content-Type: text/html; charset=utf-8
+        xhtml_cleaning = 0
+        admPanel = 0
+        debug = 0
+    }
+    10 = CONTENT
+    10 {
+        table = tt_content
+        select.orderBy = sorting
+        select.where = {#colPos}=0
+    }
+}
