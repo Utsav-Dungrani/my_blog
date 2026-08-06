@@ -1,0 +1,12 @@
+plugin.tx_myblog_blogplugin {
+    view {
+        # cat=plugin.tx_myblog_blogplugin/file; type=string; label=Path to template root (FE)
+        templateRootPath = EXT:my_blog/Resources/Private/Templates/
+        
+        # cat=plugin.tx_myblog_blogplugin/file; type=string; label=Path to template partials (FE)
+        partialRootPath = EXT:my_blog/Resources/Private/Partials/
+        
+        # cat=plugin.tx_myblog_blogplugin/file; type=string; label=Path to template layouts (FE)
+        layoutRootPath = EXT:my_blog/Resources/Private/Layouts/
+    }
+}

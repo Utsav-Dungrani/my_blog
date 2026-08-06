@@ -1,0 +1,10 @@
+New Comment Pending Approval
+
+A new comment has been submitted on your blog post and is waiting for your approval.
+
+Blog Name: {post.title}
+Commentor Name: {comment.authorName}
+Commentor Email: {comment.authorEmail}
+Commentor Description: {comment.content}
+
+Please log in to the TYPO3 Backend to approve or delete this comment.

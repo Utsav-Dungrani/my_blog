@@ -46,6 +46,15 @@ final class AuthController extends ActionController
         $this->frontendUserRepository->add($user);
         GeneralUtility::makeInstance(PersistenceManagerInterface::class)->persistAll();
         $this->addFlashMessage('Your account has been created. Please sign in using the login form.', '', ContextualFeedbackSeverity::OK);
-        return $this->redirect('login');
+
+        $loginPageId = (int)($this->settings['loginPageId'] ?? 0);
+        if ($loginPageId > 0) {
+            $uri = $this->uriBuilder->reset()->setTargetPageUid($loginPageId)->build();
+            if ($uri !== '') {
+                return $this->redirectToUri($uri);
+            }
+        }
+
+        return $this->redirect('list', 'Post');
     }
 }

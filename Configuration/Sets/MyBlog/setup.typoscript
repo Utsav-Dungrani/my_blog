@@ -1,11 +1,8 @@
-page = PAGE
-page {
-    typeNum = 0
-    10 = CONTENT
-    10 {
-        table = tt_content
-        select.orderBy = sorting
-        select.where = {#colPos}=0
+plugin.tx_myblog_blogplugin {
+    view {
+        templateRootPaths.0 = {$plugin.tx_myblog_blogplugin.view.templateRootPath}
+        partialRootPaths.0 = {$plugin.tx_myblog_blogplugin.view.partialRootPath}
+        layoutRootPaths.0 = {$plugin.tx_myblog_blogplugin.view.layoutRootPath}
     }
 }
 

@@ -102,6 +102,27 @@
                             </range>
                         </config>
                     </settings.postsPerPage>
+                    <settings.loginPageId>
+                        <label>Login Page</label>
+                        <description>Select the page containing your standard site login form.</description>
+                        <config>
+                            <type>group</type>
+                            <allowed>pages</allowed>
+                            <size>1</size>
+                            <maxitems>1</maxitems>
+                            <minitems>1</minitems>
+                            <show_thumbs>1</show_thumbs>
+                        </config>
+                    </settings.loginPageId>
+                    <settings.adminEmail>
+                        <label>Admin Notification Email</label>
+                        <description>Email address to receive new comment notifications.</description>
+                        <config>
+                            <type>email</type>
+                            <default></default>
+                            <eval>required,email</eval>
+                        </config>
+                    </settings.adminEmail>
                 </el>
             </ROOT>
         </sDEF>

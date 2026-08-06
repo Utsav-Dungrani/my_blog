@@ -74,7 +74,7 @@ class PostRepository extends Repository
         }
     }
 
-    public function findAllLimited(?int $limit = null, ?\NitsanAi\MyBlog\Domain\Model\FrontendUser $feUser = null, string $sortBy = 'newest', ?array $commentedPostUids = null): QueryResultInterface
+    public function findAllLimited(?int $limit = null, ?\NitsanAi\MyBlog\Domain\Model\FrontendUser $feUser = null, string $sortBy = 'newest', ?array $commentedPostUids = null, string $search = '', ?int $startDate = null, ?int $endDate = null): QueryResultInterface
     {
         $query = $this->createQuery();
         $this->applySortBy($query, $sortBy);
@@ -89,6 +89,15 @@ class PostRepository extends Repository
             }
             $constraints[] = $query->in('uid', $commentedPostUids);
         }
+        if ($search !== '') {
+            $constraints[] = $query->like('title', '%' . $search . '%');
+        }
+        if ($startDate !== null && $startDate > 0) {
+            $constraints[] = $query->greaterThanOrEqual('crdate', $startDate);
+        }
+        if ($endDate !== null && $endDate > 0) {
+            $constraints[] = $query->lessThanOrEqual('crdate', $endDate);
+        }
         if (count($constraints) > 0) {
             $query->matching($query->logicalAnd(...$constraints));
         }
@@ -99,7 +108,7 @@ class PostRepository extends Repository
         return $query->execute();
     }
 
-    public function findByCategory(Category $category, ?int $limit = null, ?\NitsanAi\MyBlog\Domain\Model\FrontendUser $feUser = null, string $sortBy = 'newest', ?array $commentedPostUids = null): QueryResultInterface
+    public function findByCategory(Category $category, ?int $limit = null, ?\NitsanAi\MyBlog\Domain\Model\FrontendUser $feUser = null, string $sortBy = 'newest', ?array $commentedPostUids = null, string $search = '', ?int $startDate = null, ?int $endDate = null): QueryResultInterface
     {
         $query = $this->createQuery();
         $this->applySortBy($query, $sortBy);
@@ -114,6 +123,15 @@ class PostRepository extends Repository
             }
             $constraints[] = $query->in('uid', $commentedPostUids);
         }
+        if ($search !== '') {
+            $constraints[] = $query->like('title', '%' . $search . '%');
+        }
+        if ($startDate !== null && $startDate > 0) {
+            $constraints[] = $query->greaterThanOrEqual('crdate', $startDate);
+        }
+        if ($endDate !== null && $endDate > 0) {
+            $constraints[] = $query->lessThanOrEqual('crdate', $endDate);
+        }
         $query->matching($query->logicalAnd(...$constraints));
         
         if ($limit !== null && $limit > 0) {
@@ -125,19 +143,22 @@ class PostRepository extends Repository
     /**
      * @param Category[] $categories
      */
-    public function findByCategories(array $categories, ?int $limit = null, ?\NitsanAi\MyBlog\Domain\Model\FrontendUser $feUser = null, string $sortBy = 'newest', ?array $commentedPostUids = null): QueryResultInterface
+    public function findByCategories(array $categories, ?int $limit = null, ?\NitsanAi\MyBlog\Domain\Model\FrontendUser $feUser = null, string $sortBy = 'newest', ?array $commentedPostUids = null, string $search = '', ?int $startDate = null, ?int $endDate = null): QueryResultInterface
     {
         $query = $this->createQuery();
         $this->applySortBy($query, $sortBy);
         
-        if ($categories === []) {
+        if ($categories === [] && $search === '' && $startDate === null && $endDate === null) {
             return $query->matching($query->equals('uid', 0))->execute();
         }
-        $catConstraints = [];
-        foreach ($categories as $category) {
-            $catConstraints[] = $query->contains('categories', $category);
+        $constraint = null;
+        if ($categories !== []) {
+            $catConstraints = [];
+            foreach ($categories as $category) {
+                $catConstraints[] = $query->contains('categories', $category);
+            }
+            $constraint = $query->logicalOr(...$catConstraints);
         }
-        $constraint = $query->logicalOr(...$catConstraints);
         
         $additionalConstraints = [];
         if ($feUser !== null) {
@@ -149,11 +170,26 @@ class PostRepository extends Repository
             }
             $additionalConstraints[] = $query->in('uid', $commentedPostUids);
         }
+        if ($search !== '') {
+            $additionalConstraints[] = $query->like('title', '%' . $search . '%');
+        }
+        if ($startDate !== null && $startDate > 0) {
+            $additionalConstraints[] = $query->greaterThanOrEqual('crdate', $startDate);
+        }
+        if ($endDate !== null && $endDate > 0) {
+            $additionalConstraints[] = $query->lessThanOrEqual('crdate', $endDate);
+        }
         
-        if (count($additionalConstraints) > 0) {
-            $query->matching($query->logicalAnd($constraint, ...$additionalConstraints));
+        if ($constraint !== null) {
+            if (count($additionalConstraints) > 0) {
+                $query->matching($query->logicalAnd($constraint, ...$additionalConstraints));
+            } else {
+                $query->matching($constraint);
+            }
+        } elseif (count($additionalConstraints) > 0) {
+            $query->matching($query->logicalAnd(...$additionalConstraints));
         } else {
-            $query->matching($constraint);
+            return $query->matching($query->equals('uid', 0))->execute();
         }
         
         if ($limit !== null && $limit > 0) {
@@ -183,14 +219,17 @@ class PostRepository extends Repository
         array $configuredCategories = [],
         ?\NitsanAi\MyBlog\Domain\Model\FrontendUser $feUser = null,
         string $sortBy = 'newest',
-        ?array $commentedPostUids = null
+        ?array $commentedPostUids = null,
+        string $search = '',
+        ?int $startDate = null,
+        ?int $endDate = null
     ): array {
         if ($selectedCategory !== null) {
-            $posts = $this->findByCategory($selectedCategory, 0, $feUser, $sortBy, $commentedPostUids);
-        } elseif ($configuredCategories !== []) {
-            $posts = $this->findByCategories($configuredCategories, 0, $feUser, $sortBy, $commentedPostUids);
+            $posts = $this->findByCategory($selectedCategory, 0, $feUser, $sortBy, $commentedPostUids, $search, $startDate, $endDate);
+        } elseif ($configuredCategories !== [] || $search !== '' || $startDate !== null || $endDate !== null) {
+            $posts = $this->findByCategories($configuredCategories, 0, $feUser, $sortBy, $commentedPostUids, $search, $startDate, $endDate);
         } else {
-            $posts = $this->findAllLimited(0, $feUser, $sortBy, $commentedPostUids);
+            $posts = $this->findAllLimited(0, $feUser, $sortBy, $commentedPostUids, $search, $startDate, $endDate);
         }
 
         $postsArray = $posts->toArray();

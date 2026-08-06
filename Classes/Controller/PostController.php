@@ -84,7 +84,7 @@ class PostController extends ActionController
         }
     }
 
-    public function listAction(?Category $selectedCategory = null, bool $myPosts = false, string $sortBy = 'newest', bool $commentedByMe = false, int $currentPage = 1, bool $showAll = false): ResponseInterface
+    public function listAction(?Category $selectedCategory = null, bool $myPosts = false, string $sortBy = 'newest', bool $commentedByMe = false, int $currentPage = 1, bool $showAll = false, string $search = '', string $startDate = '', string $endDate = ''): ResponseInterface
     {
         $postsPerPage = (int)($this->settings['postsPerPage'] ?? 10);
         if ($postsPerPage <= 0) {
@@ -124,12 +124,32 @@ class PostController extends ActionController
             $commentedPostUids = $this->commentRepository->findPostUidsCommentedBy($feUserUid);
         }
 
+        $startInt = null;
+        $endInt = null;
+        if (!empty($startDate)) {
+            $startInt = strtotime($startDate . ' 00:00:00');
+            $startInt = $startInt !== false ? $startInt : null;
+        }
+        if (!empty($endDate)) {
+            $endInt = strtotime($endDate . ' 23:59:59');
+            $endInt = $endInt !== false ? $endInt : null;
+        }
+
+        if ($startInt !== null && $endInt !== null && $startInt > $endInt) {
+            $this->addFlashMessage('The "To" date must be greater than or equal to the "From" date.', '', ContextualFeedbackSeverity::ERROR);
+            $endInt = null;
+            $endDate = '';
+        }
+
         $postsArray = $this->postRepository->findPostsFilteredAndSorted(
             $selectedCategory,
             $showAll ? [] : ($configuredCategoryUids !== [] ? $categories->toArray() : []),
             $authorFilter,
             $sortBy,
-            $commentedPostUids
+            $commentedPostUids,
+            $search,
+            $startInt,
+            $endInt
         );
 
         $paginator = new \TYPO3\CMS\Core\Pagination\ArrayPaginator($postsArray, $currentPage, $postsPerPage);
@@ -143,6 +163,9 @@ class PostController extends ActionController
         $this->view->assign('commentedByMeActive', $commentedByMe);
         $this->view->assign('showAllActive', $showAll);
         $this->view->assign('currentSortBy', $sortBy);
+        $this->view->assign('currentSearch', $search);
+        $this->view->assign('currentStartDate', $startDate);
+        $this->view->assign('currentEndDate', $endDate);
         
         $this->view->assign('categories', $categories);
         $this->view->assign('selectedCategory', $selectedCategory);
@@ -233,8 +256,6 @@ class PostController extends ActionController
             return $this->htmlResponse();
         }
 
-
-
         if ($newPost->getReadingTime() <= 0) {
             $this->addFlashMessage('Please enter a valid reading time in minutes.', '', ContextualFeedbackSeverity::ERROR);
             $this->view->assign('newPost', $newPost);
@@ -286,7 +307,7 @@ class PostController extends ActionController
         $this->view->assign('post', $post);
         return $this->htmlResponse();
     }
-
+    
     public function updateAction(Post $post): ResponseInterface
     {
         $context = GeneralUtility::makeInstance(Context::class);
@@ -308,8 +329,6 @@ class PostController extends ActionController
             $this->view->setTemplate('Edit');
             return $this->htmlResponse();
         }
-
-
 
         if ($post->getReadingTime() <= 0) {
             $this->addFlashMessage('Please enter a valid reading time in minutes.', '', ContextualFeedbackSeverity::ERROR);
@@ -435,6 +454,22 @@ class PostController extends ActionController
         $this->postRepository->update($post);
 
         GeneralUtility::makeInstance(PersistenceManagerInterface::class)->persistAll();
+
+        $email = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Mail\FluidEmail::class);
+        
+        $toEmail = 'admin@demo.local';
+        if (!empty($this->settings['adminEmail'])) {
+            $toEmail = $this->settings['adminEmail'];
+        }
+        
+        $email->to($toEmail)
+            ->from(new \Symfony\Component\Mime\Address('no-reply@demo.local', 'My Blog'))
+            ->subject('New Comment Pending Approval: ' . $post->getTitle())
+            ->setTemplate('NewComment')
+            ->assign('comment', $newComment)
+            ->assign('post', $post);
+            
+        GeneralUtility::makeInstance(\TYPO3\CMS\Core\Mail\MailerInterface::class)->send($email);
 
         $this->addFlashMessage('Your comment has been submitted and is awaiting moderation.');
         return $this->redirect('show', null, null, ['post' => $post]);

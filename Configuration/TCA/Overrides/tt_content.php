@@ -8,7 +8,7 @@ $contentType = ExtensionUtility::registerPlugin(
     'MyBlog',
     'BlogPlugin',
     'Blog Posts Display & Management',
-    'EXT:core/Resources/Public/Icons/Extension.svg',
+    'content-plugin',
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
 
