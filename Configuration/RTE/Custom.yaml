@@ -1,0 +1,58 @@
+# Load the default TYPO3 RTE configuration as our baseline
+imports:
+  - { resource: "EXT:rte_ckeditor/Configuration/RTE/Default.yaml" }
+
+# Override the editor toolbar specifically for our blog
+editor:
+  config:
+    toolbar:
+      items:
+        - heading
+        - '|'
+        - bold
+        - italic
+        - underline
+        - strikethrough
+        - '|'
+        - fontColor
+        - fontBackgroundColor
+        - '|'
+        - bulletedList
+        - numberedList
+        - '|'
+        - alignment
+        - '|'
+        - blockQuote
+        - insertTable
+        - link
+        - '|'
+        - undo
+        - redo
+
+    # Explicitly import the Font plugin module (required in TYPO3 12/13 for colors)
+    importModules:
+      - { module: '@ckeditor/ckeditor5-font', exports: ['Font'] }
+
+    # Define custom brand/theme colors for the Font Color picker
+    fontColor:
+      colorPicker:
+        format: 'hex'
+      colors:
+        - { color: '#000000', label: 'Black' }
+        - { color: '#ffffff', label: 'White' }
+        - { color: '#0d6efd', label: 'Primary Blue' }
+        - { color: '#6c757d', label: 'Secondary Gray' }
+        - { color: '#198754', label: 'Success Green' }
+        - { color: '#dc3545', label: 'Danger Red' }
+        - { color: '#ffc107', label: 'Warning Yellow' }
+        - { color: '#0dcaf0', label: 'Info Cyan' }
+
+    # Define custom background colors for the Font Background picker
+    fontBackgroundColor:
+      colorPicker:
+        format: 'hex'
+      colors:
+        - { color: '#000000', label: 'Black' }
+        - { color: '#ffffff', label: 'White' }
+        - { color: '#ffc107', label: 'Highlighter Yellow' }
+        - { color: '#dc3545', label: 'Red Alert' }

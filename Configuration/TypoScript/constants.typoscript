@@ -1,12 +1,39 @@
+# customcategory=tx_myblog_blogplugin=My Blog Extension
+
 plugin.tx_myblog_blogplugin {
     view {
-        # cat=plugin.tx_myblog_blogplugin/file; type=string; label=Path to template root (FE)
+        # cat=tx_myblog_blogplugin/file/10; type=string; label=Path to template root (FE)
         templateRootPath = EXT:my_blog/Resources/Private/Templates/
-        
-        # cat=plugin.tx_myblog_blogplugin/file; type=string; label=Path to template partials (FE)
+        # cat=tx_myblog_blogplugin/file/20; type=string; label=Path to template partials (FE)
         partialRootPath = EXT:my_blog/Resources/Private/Partials/
-        
-        # cat=plugin.tx_myblog_blogplugin/file; type=string; label=Path to template layouts (FE)
+        # cat=tx_myblog_blogplugin/file/30; type=string; label=Path to template layouts (FE)
         layoutRootPath = EXT:my_blog/Resources/Private/Layouts/
+    }
+    
+    settings {
+        # cat=tx_myblog_blogplugin/general/20; type=string; label=Global Date Format: Used across the frontend (e.g. d M Y, H:i).
+        dateFormat = d M Y, H:i
+        
+        # cat=tx_myblog_blogplugin/general/25; type=string; label=Read More Button Text
+        readMoreLabel = Read More
+        
+        # cat=tx_myblog_blogplugin/general/26; type=int+; label=List View Text Crop Length
+        listCropLength = 100
+        
+        # cat=tx_myblog_blogplugin/general/27; type=int+; label=Card View Text Crop Length
+        cardCropLength = 50
+        
+        # cat=tx_myblog_blogplugin/image/30; type=string; label=List View Image Width: e.g. 300c
+        listImageWidth = 300c
+        # cat=tx_myblog_blogplugin/image/31; type=string; label=List View Image Height: e.g. 250c
+        listImageHeight = 250c
+        
+        # cat=tx_myblog_blogplugin/image/32; type=string; label=Card View Image Width: e.g. 600c
+        cardImageWidth = 600c
+        # cat=tx_myblog_blogplugin/image/33; type=string; label=Card View Image Height: e.g. 400c
+        cardImageHeight = 400c
+        
+        # cat=tx_myblog_blogplugin/features/10; type=boolean; label=Enable Comments: Turn the frontend comment form on or off.
+        enableComments = 1
     }
 }

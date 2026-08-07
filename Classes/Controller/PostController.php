@@ -86,9 +86,9 @@ class PostController extends ActionController
 
     public function listAction(?Category $selectedCategory = null, bool $myPosts = false, string $sortBy = 'newest', bool $commentedByMe = false, int $currentPage = 1, bool $showAll = false, string $search = '', string $startDate = '', string $endDate = ''): ResponseInterface
     {
-        $postsPerPage = (int)($this->settings['postsPerPage'] ?? 10);
+        $postsPerPage = (int)($this->settings['postsPerPage'] ?? 5);
         if ($postsPerPage <= 0) {
-            $postsPerPage = 10;
+            $postsPerPage = 5;
         }
         $configuredCategoryUids = GeneralUtility::intExplode(',', (string)($this->settings['filterCategories'] ?? ''), true);
         $categories = $configuredCategoryUids === []

@@ -2,8 +2,6 @@
       xmlns:blog="http://typo3.org/ns/NitsanAi/MyBlog/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:asset.script identifier="myBlogAjax" src="EXT:my_blog/Resources/Public/JavaScript/AjaxPagination.js" />
-
 <div class="container mt-4" id="myblog-list-container">
     <div class="card">
         <f:if condition="{post.image}">
@@ -16,10 +14,10 @@
             <div class="d-flex flex-wrap gap-3 align-items-center mb-3 text-muted">
                 <span>👤 <strong><f:if condition="{post.feUser}"><f:then>{post.feUser.name -> f:or(alternative: post.feUser.username)}</f:then><f:else>{post.author}</f:else></f:if></strong></span>
                 <f:if condition="{post.crdate}">
-                    <span>📅 Created: <f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></span>
+                    <span>📅 Created: <f:format.date format="{settings.dateFormat}">{post.crdate}</f:format.date></span>
                 </f:if>
                 <f:if condition="{blog:hasBeenEdited(created: post.crdate, updated: post.tstamp)}">
-                    <span>✏️ Edited: <f:format.date format="d M Y, H:i">{post.tstamp}</f:format.date></span>
+                    <span>✏️ Edited: <f:format.date format="{settings.dateFormat}">{post.tstamp}</f:format.date></span>
                 </f:if>
                 <span>⏱️ {post.readingTime} min read</span>
                 <span>👁️ {post.views} views</span>
@@ -36,6 +34,7 @@
             </div>
 
             <!-- Comments Section -->
+            <f:if condition="{settings.enableComments}">
             <div class="mt-5">
                 <h4 class="mb-4">💬 {blog:commentCount(comments: comments)}</h4>
 
@@ -50,7 +49,7 @@
                                     <div class="d-flex w-100 justify-content-between align-items-center mb-1">
                                         <h6 class="mb-1 text-primary">👤 {comment.authorName}</h6>
                                         <f:if condition="{comment.crdate}">
-                                            <small class="text-muted"><f:format.date format="d M Y, H:i">{comment.crdate}</f:format.date></small>
+                                            <small class="text-muted"><f:format.date format="{settings.dateFormat}">{comment.crdate}</f:format.date></small>
                                         </f:if>
                                     </div>
                                     <p class="mb-1">{comment.content -> f:format.nl2br()}</p>
@@ -131,6 +130,7 @@
                     </f:else>
                 </f:if>
             </div>
+            </f:if>
 
             <div class="mt-4">
                 <f:link.action action="list" class="btn btn-secondary">← Back to Posts</f:link.action>

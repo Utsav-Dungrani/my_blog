@@ -1,12 +1,35 @@
 plugin.tx_myblog_blogplugin {
     view {
         templateRootPaths.0 = {$plugin.tx_myblog_blogplugin.view.templateRootPath}
+        templateRootPaths.10 = EXT:my_blog/Resources/Private/Templates/
+        
         partialRootPaths.0 = {$plugin.tx_myblog_blogplugin.view.partialRootPath}
+        partialRootPaths.10 = EXT:my_blog/Resources/Private/Partials/
+        
         layoutRootPaths.0 = {$plugin.tx_myblog_blogplugin.view.layoutRootPath}
+        layoutRootPaths.10 = EXT:my_blog/Resources/Private/Layouts/
+    }
+    
+    settings {
+        dateFormat = {$plugin.tx_myblog_blogplugin.settings.dateFormat}
+        readMoreLabel = {$plugin.tx_myblog_blogplugin.settings.readMoreLabel}
+        listCropLength = {$plugin.tx_myblog_blogplugin.settings.listCropLength}
+        cardCropLength = {$plugin.tx_myblog_blogplugin.settings.cardCropLength}
+        listImageWidth = {$plugin.tx_myblog_blogplugin.settings.listImageWidth}
+        listImageHeight = {$plugin.tx_myblog_blogplugin.settings.listImageHeight}
+        cardImageWidth = {$plugin.tx_myblog_blogplugin.settings.cardImageWidth}
+        cardImageHeight = {$plugin.tx_myblog_blogplugin.settings.cardImageHeight}
+        enableComments = {$plugin.tx_myblog_blogplugin.settings.enableComments}
     }
 }
 
+# 8. JavaScript Inclusion via TypoScript
+page.includeJSFooter {
+    myBlogAjax = EXT:my_blog/Resources/Public/JavaScript/AjaxPagination.js
+    myBlogFilterValidation = EXT:my_blog/Resources/Public/JavaScript/FilterValidation.js
+}
 
+# 9. AJAX PageType for Headless Filtering
 blogAjax = PAGE
 blogAjax {
     typeNum = 99
@@ -22,5 +45,50 @@ blogAjax {
         table = tt_content
         select.orderBy = sorting
         select.where = {#colPos}=0
+        # By leaving this open, we evaluate only the plugin content elements via JS routing
     }
 }
+
+# 10. Dynamic SEO Meta Tags (For Blog Detail Page)
+[traverse(request.getQueryParams(), 'tx_myblog_blogplugin/post') > 0]
+    # Suppress the default TYPO3 <title> tag so ours doesn't conflict!
+    config.noPageTitle = 2
+
+    # Dynamically inject the specific Blog Post Title into the page <title>
+    page.headerData.999 = RECORDS
+    page.headerData.999 {
+        source.data = GP:tx_myblog_blogplugin|post
+        source.intval = 1
+        tables = tx_myblog_domain_model_post
+        conf.tx_myblog_domain_model_post = TEXT
+        conf.tx_myblog_domain_model_post {
+            field = title
+            wrap = <title>|</title>
+        }
+    }
+    
+    # Dynamically generate the Meta Description from the Post body
+    page.meta.description >
+    page.meta.description.cObject = RECORDS
+    page.meta.description.cObject {
+        source.data = GP:tx_myblog_blogplugin|post
+        source.intval = 1
+        tables = tx_myblog_domain_model_post
+        conf.tx_myblog_domain_model_post = TEXT
+        conf.tx_myblog_domain_model_post.field = description
+        conf.tx_myblog_domain_model_post.crop = 150 | ... | 1
+        conf.tx_myblog_domain_model_post.stripHtml = 1
+    }
+    
+    # Dynamically generate the Meta Author from the Post
+    page.meta.author >
+    page.meta.author.cObject = RECORDS
+    page.meta.author.cObject {
+        source.data = GP:tx_myblog_blogplugin|post
+        source.intval = 1
+        tables = tx_myblog_domain_model_post
+        conf.tx_myblog_domain_model_post = TEXT
+        conf.tx_myblog_domain_model_post.field = author
+        conf.tx_myblog_domain_model_post.required = 1
+    }
+[global]

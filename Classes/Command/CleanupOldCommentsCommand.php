@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace NitsanAi\MyBlog\Command;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use NitsanAi\MyBlog\Domain\Repository\CommentRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -18,6 +17,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class CleanupOldCommentsCommand extends Command
 {
+    public function __construct(
+        private readonly CommentRepository $commentRepository
+    ) {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         $this->addArgument(
@@ -37,22 +42,7 @@ class CleanupOldCommentsCommand extends Command
             return Command::FAILURE;
         }
 
-        $thresholdTimestamp = strtotime('-' . $days . ' days');
-        if ($thresholdTimestamp === false) {
-            $io->error('Failed to calculate the date threshold.');
-            return Command::FAILURE;
-        }
-
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('tx_myblog_domain_model_comment');
-
-        $deletedCount = $queryBuilder
-            ->delete('tx_myblog_domain_model_comment')
-            ->where(
-                $queryBuilder->expr()->eq('approved', $queryBuilder->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER)),
-                $queryBuilder->expr()->lt('crdate', $queryBuilder->createNamedParameter($thresholdTimestamp, \Doctrine\DBAL\ParameterType::INTEGER))
-            )
-            ->executeStatement();
+        $deletedCount = $this->commentRepository->deleteUnapprovedOlderThan($days);
 
         $io->success(sprintf('Successfully deleted %d unapproved comments older than %d days.', $deletedCount, $days));
 

@@ -59,7 +59,7 @@ return [
             'config' => [
                 'type' => 'text',
                 'enableRichtext' => true,
-                'richtextConfiguration' => 'default',
+                'richtextConfiguration' => 'myblog_custom',
                 'cols' => 40,
                 'rows' => 15,
                 'eval' => 'trim',

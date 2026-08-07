@@ -2,15 +2,29 @@
       xmlns:blog="http://typo3.org/ns/NitsanAi/MyBlog/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:asset.script identifier="myBlogAjax" src="EXT:my_blog/Resources/Public/JavaScript/AjaxPagination.js" />
-
 <div class="container mt-4" id="myblog-list-container">
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h2 class="mb-0">Blog Posts</h2>
+    <f:form action="list" method="post">
+        <f:if condition="{selectedCategory}"><f:form.hidden name="selectedCategory" value="{selectedCategory}" /></f:if>
+        <f:if condition="{myPostsActive}"><f:form.hidden name="myPosts" value="1" /></f:if>
+        <f:if condition="{commentedByMeActive}"><f:form.hidden name="commentedByMe" value="1" /></f:if>
+        <f:if condition="{showAllActive}"><f:form.hidden name="showAll" value="1" /></f:if>
+
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h2 class="mb-0">Blog Posts</h2>
+            
+            <div class="mx-auto flex-grow-1 d-flex justify-content-center align-items-center gap-2" style="max-width: 500px;">
+                <div class="input-group">
+                    <f:form.textfield name="search" id="searchTitle" value="{currentSearch}" class="form-control" placeholder="Search title..." />
+                    <button id="blog-search-btn" class="btn btn-outline-secondary" type="submit">🔍</button>
+                </div>
+                <f:link.action action="list" class="btn btn-outline-danger ajax-link text-nowrap" title="Reset All Filters">✖ Reset</f:link.action>
+            </div>
+
         <div class="d-flex align-items-center gap-2">
             <f:security.ifAuthenticated>
                 <f:then>
                     <f:link.action action="new" class="btn btn-primary">+ Create New Post</f:link.action>
+                    <f:link.page pageUid="{settings.loginPageId}" additionalParams="{logintype: 'logout'}" class="btn btn-outline-danger">Log Out</f:link.page>
                 </f:then>
                 <f:else>
                     <f:link.page pageUid="{settings.loginPageId}" class="btn btn-outline-primary me-2">Log In</f:link.page>
@@ -47,42 +61,32 @@
             </div>
         </f:if>
         
-        <div class="ms-auto mt-2 mt-md-0">
-            <f:form action="list" method="post" class="d-flex flex-wrap align-items-center gap-2">
-                <f:if condition="{selectedCategory}"><f:form.hidden name="selectedCategory" value="{selectedCategory}" /></f:if>
-                <f:if condition="{myPostsActive}"><f:form.hidden name="myPosts" value="1" /></f:if>
-                <f:if condition="{commentedByMeActive}"><f:form.hidden name="commentedByMe" value="1" /></f:if>
-                <f:if condition="{showAllActive}"><f:form.hidden name="showAll" value="1" /></f:if>
-                
-                <div class="input-group input-group-sm" style="max-width: 250px;">
-                    <span class="input-group-text">From</span>
-                    <f:form.textfield type="date" name="startDate" id="startDate" value="{currentStartDate}" class="form-control" additionalAttributes="{onchange: 'document.getElementById(\'endDate\').min = this.value;'}" />
-                    <span class="input-group-text">To</span>
-                    <f:form.textfield type="date" name="endDate" id="endDate" value="{currentEndDate}" class="form-control" additionalAttributes="{min: currentStartDate}" />
-                </div>
-
-                <div class="input-group input-group-sm" style="width: 200px;">
-                    <f:form.textfield name="search" value="{currentSearch}" class="form-control" placeholder="Search title..." />
-                    <button class="btn btn-outline-secondary" type="submit">🔍</button>
-                </div>
-                
-                <label for="sortBy" class="fw-semibold text-nowrap mb-0 ms-md-2">Sort by:</label>
-                <f:form.select name="sortBy" id="sortBy" class="form-select form-select-sm" style="width: auto;" value="{currentSortBy}" onchange="this.form.submit()"
-                    options="{
-                        newest: 'Newest First', 
-                        oldest: 'Oldest First', 
-                        views_desc: 'Most Viewed', 
-                        views_asc: 'Least Viewed',
-                        comments_desc: 'Most Commented (Total)',
-                        comments_asc: 'Least Commented',
-                        community_desc: 'Most Commented (Registered)',
-                        public_desc: 'Most Commented (Guests)',
-                        reading_desc: 'Longest Read',
-                        reading_asc: 'Shortest Read'
-                    }" />
-            </f:form>
+        <div class="ms-auto mt-2 mt-md-0 d-flex flex-wrap align-items-center gap-2">
+            <div class="input-group input-group-sm" style="width: 380px;">
+                <span class="input-group-text">From</span>
+                <f:form.textfield type="date" name="startDate" id="startDate" value="{currentStartDate}" class="form-control" additionalAttributes="{onchange: 'document.getElementById(\'endDate\').min = this.value;'}" />
+                <span class="input-group-text">To</span>
+                <f:form.textfield type="date" name="endDate" id="endDate" value="{currentEndDate}" class="form-control" additionalAttributes="{min: currentStartDate}" />
+                <button id="blog-date-apply-btn" class="btn btn-outline-primary" type="submit">Apply</button>
+            </div>
+            
+            <label for="sortBy" class="fw-semibold text-nowrap mb-0 ms-md-2">Sort by:</label>
+            <f:form.select name="sortBy" id="sortBy" class="form-select form-select-sm" style="width: auto;" value="{currentSortBy}" onchange="this.form.submit()"
+                options="{
+                    newest: 'Newest First', 
+                    oldest: 'Oldest First', 
+                    views_desc: 'Most Viewed', 
+                    views_asc: 'Least Viewed',
+                    comments_desc: 'Most Commented (Total)',
+                    comments_asc: 'Least Commented',
+                    community_desc: 'Most Commented (Registered)',
+                    public_desc: 'Most Commented (Guests)',
+                    reading_desc: 'Longest Read',
+                    reading_asc: 'Shortest Read'
+                }" />
         </div>
     </div>
+    </f:form>
 
     <f:if condition="{posts}">
         <f:then>
@@ -95,19 +99,19 @@
                                 <div class="row g-3 align-items-center">
                                     <f:if condition="{post.image}">
                                         <div class="col-md-3">
-                                            <f:image class="img-fluid rounded" image="{post.image}" alt="{post.title}" width="300" />
+                                            <f:image class="img-fluid rounded" image="{post.image}" alt="{post.title}" width="{settings.listImageWidth}" height="{settings.listImageHeight}" />
                                         </div>
                                     </f:if>
                                     <div class="{f:if(condition: post.image, then: 'col-md-9', else: 'col-12')}">
                                         <h5>{post.title}</h5>
-                                        <div class="text-muted small mb-2">👤 {post.author} · ⏱️ {post.readingTime} min read · 👁️ {post.views} views · 💬 {blog:commentCount(comments: post.approvedComments)} · 📅 Created: <f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></div>
+                                        <div class="text-muted small mb-2">👤 {post.author} · ⏱️ {post.readingTime} min read · 👁️ {post.views} views <f:if condition="{settings.enableComments}">· 💬 {blog:commentCount(comments: post.approvedComments)} </f:if>· 📅 Created: <f:format.date format="{settings.dateFormat}">{post.crdate}</f:format.date></div>
                                         <f:if condition="{post.categories}">
                                             <div class="mb-2">
                                                 <f:for each="{post.categories}" as="category"><span class="badge bg-primary me-1">{category.title}</span></f:for>
                                             </div>
                                         </f:if>
-                                        <p class="mb-2">{post.description -> f:format.stripTags() -> f:format.crop(maxCharacters: 220)}</p>
-                                        <f:link.action action="show" arguments="{post: post}" class="btn btn-sm btn-outline-primary">Read More</f:link.action>
+                                        <f:format.html><p class="mb-2">{post.description -> f:format.crop(maxCharacters: settings.listCropLength)}</p></f:format.html>
+                                        <f:link.action action="show" arguments="{post: post}" class="btn btn-sm btn-outline-primary">{settings.readMoreLabel}</f:link.action>
                                         <f:security.ifAuthenticated>
                                             <f:if condition="{post.feUser.uid} == {loggedInUserUid}">
                                                 <f:link.action action="edit" arguments="{post: post}" class="btn btn-sm btn-outline-secondary ms-2">Edit</f:link.action>
@@ -126,20 +130,20 @@
                         <f:for each="{posts}" as="post">
                             <div class="{cardColumnClass}">
                                 <div class="card h-100 border border-2 border-secondary">
-                                    <f:if condition="{post.image}"><f:image class="card-img-top" image="{post.image}" alt="{post.title}" width="600" /></f:if>
+                                    <f:if condition="{post.image}"><f:image class="card-img-top" image="{post.image}" alt="{post.title}" width="{settings.cardImageWidth}" height="{settings.cardImageHeight}" /></f:if>
                                     <div class="card-body">
                                         <h5 class="card-title">{post.title}</h5>
                                         <div class="d-flex flex-wrap gap-2 align-items-center mb-2 text-muted small">
                                             <span>👤 {post.author}</span>
                                             <span>⏱️ {post.readingTime} min read</span>
                                             <span>👁️ {post.views} views</span>
-                                            <span>💬 {blog:commentCount(comments: post.approvedComments)}</span>
-                                            <span>📅 Created: <f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></span>
+                                            <f:if condition="{settings.enableComments}"><span>💬 {blog:commentCount(comments: post.approvedComments)}</span></f:if>
+                                            <span>📅 Created: <f:format.date format="{settings.dateFormat}">{post.crdate}</f:format.date></span>
                                         </div>
                                         <f:if condition="{post.categories}"><div class="mb-2"><f:for each="{post.categories}" as="category"><span class="badge bg-primary me-1">{category.title}</span></f:for></div></f:if>
-                                        <p class="card-text">{post.description -> f:format.stripTags() -> f:format.crop(maxCharacters: 140)}</p>
+                                        <f:format.html><p class="card-text">{post.description -> f:format.crop(maxCharacters: settings.cardCropLength)}</p></f:format.html>
                                         <div class="mt-3">
-                                            <f:link.action action="show" arguments="{post: post}" class="btn btn-sm btn-outline-primary">Read More</f:link.action>
+                                            <f:link.action action="show" arguments="{post: post}" class="btn btn-sm btn-outline-primary">{settings.readMoreLabel}</f:link.action>
                                             <f:security.ifAuthenticated>
                                                 <f:if condition="{post.feUser.uid} == {loggedInUserUid}">
                                                     <f:link.action action="edit" arguments="{post: post}" class="btn btn-sm btn-outline-secondary ms-2">Edit</f:link.action>

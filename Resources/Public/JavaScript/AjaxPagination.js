@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function attachAjaxEvents() {
         const links = container.querySelectorAll('a[href]');
         links.forEach(link => {
-            if (link.closest('.pagination') || link.closest('[aria-label="Filter blog posts by category"]')) {
+            if (link.closest('.pagination') || link.closest('[aria-label="Filter blog posts by category"]') || link.classList.contains('ajax-link') || link.closest('.ajax-link')) {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
                     loadAjaxContent(this.href);
