@@ -12,6 +12,42 @@
             <trans-unit id="mlang_labels_tabdescr" resname="mlang_labels_tabdescr">
                 <source>This module allows you to view and manage blog posts on the currently selected page or folder.</source>
             </trans-unit>
+            <trans-unit id="module.no_page_selected" resname="module.no_page_selected">
+                <source>Please select a page or sysfolder in the TYPO3 Page Tree on the left to view the blog posts stored inside it.</source>
+            </trans-unit>
+            <trans-unit id="module.no_post_found" resname="module.no_post_found">
+                <source>There are no blog posts stored on the currently selected page.</source>
+            </trans-unit>
+            <trans-unit id="module.title" resname="module.title">
+                <source>Blog Posts on Current Page</source>
+            </trans-unit>
+            <trans-unit id="module.th.title" resname="module.th.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="module.th.description" resname="module.th.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="module.th.author" resname="module.th.author">
+                <source>Author</source>
+            </trans-unit>
+            <trans-unit id="module.th.categories" resname="module.th.categories">
+                <source>Categories</source>
+            </trans-unit>
+            <trans-unit id="module.th.comments" resname="module.th.comments">
+                <source>Comments</source>
+            </trans-unit>
+            <trans-unit id="module.th.readingTime" resname="module.th.readingTime">
+                <source>Reading Time</source>
+            </trans-unit>
+            <trans-unit id="module.th.views" resname="module.th.views">
+                <source>Views</source>
+            </trans-unit>
+            <trans-unit id="module.th.created" resname="module.th.created">
+                <source>Created</source>
+            </trans-unit>
+            <trans-unit id="module.th.edited" resname="module.th.edited">
+                <source>Edited</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

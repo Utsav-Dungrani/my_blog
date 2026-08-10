@@ -166,6 +166,7 @@ class PostController extends ActionController
         $this->view->assign('currentSearch', $search);
         $this->view->assign('currentStartDate', $startDate);
         $this->view->assign('currentEndDate', $endDate);
+        $this->view->assign('todayDate', date('Y-m-d'));
         
         $this->view->assign('categories', $categories);
         $this->view->assign('selectedCategory', $selectedCategory);

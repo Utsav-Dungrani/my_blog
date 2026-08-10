@@ -14,13 +14,13 @@
             <div class="d-flex flex-wrap gap-3 align-items-center mb-3 text-muted">
                 <span>👤 <strong><f:if condition="{post.feUser}"><f:then>{post.feUser.name -> f:or(alternative: post.feUser.username)}</f:then><f:else>{post.author}</f:else></f:if></strong></span>
                 <f:if condition="{post.crdate}">
-                    <span>📅 Created: <f:format.date format="{settings.dateFormat}">{post.crdate}</f:format.date></span>
+                    <span>📅 <f:translate key="post.created" /> <f:format.date format="{settings.dateFormat}">{post.crdate}</f:format.date></span>
                 </f:if>
                 <f:if condition="{blog:hasBeenEdited(created: post.crdate, updated: post.tstamp)}">
-                    <span>✏️ Edited: <f:format.date format="{settings.dateFormat}">{post.tstamp}</f:format.date></span>
+                    <span>✏️ <f:translate key="post.edited" /> <f:format.date format="{settings.dateFormat}">{post.tstamp}</f:format.date></span>
                 </f:if>
-                <span>⏱️ {post.readingTime} min read</span>
-                <span>👁️ {post.views} views</span>
+                <span>⏱️ {post.readingTime} <f:translate key="post.readTime" /></span>
+                <span>👁️ {post.views} <f:translate key="post.views" /></span>
             </div>
             <f:if condition="{post.categories}">
                 <div class="mb-3">
@@ -61,8 +61,8 @@
                                 <ul class="pagination mb-0">
                                     <li class="page-item {f:if(condition: commentPagination.previousPageNumber, else: 'disabled')}">
                                         <f:if condition="{commentPagination.previousPageNumber}">
-                                            <f:then><f:link.action action="show" arguments="{post: post, currentPage: commentPagination.previousPageNumber}" class="page-link">Previous</f:link.action></f:then>
-                                            <f:else><span class="page-link">Previous</span></f:else>
+                                            <f:then><f:link.action action="show" arguments="{post: post, currentPage: commentPagination.previousPageNumber}" class="page-link"><f:translate key="post.comments.previous" /></f:link.action></f:then>
+                                            <f:else><span class="page-link"><f:translate key="post.comments.previous" /></span></f:else>
                                         </f:if>
                                     </li>
                                     <f:for each="{commentPagination.allPageNumbers}" as="pageNumber">
@@ -72,8 +72,8 @@
                                     </f:for>
                                     <li class="page-item {f:if(condition: commentPagination.nextPageNumber, else: 'disabled')}">
                                         <f:if condition="{commentPagination.nextPageNumber}">
-                                            <f:then><f:link.action action="show" arguments="{post: post, currentPage: commentPagination.nextPageNumber}" class="page-link">Next</f:link.action></f:then>
-                                            <f:else><span class="page-link">Next</span></f:else>
+                                            <f:then><f:link.action action="show" arguments="{post: post, currentPage: commentPagination.nextPageNumber}" class="page-link"><f:translate key="post.comments.next" /></f:link.action></f:then>
+                                            <f:else><span class="page-link"><f:translate key="post.comments.next" /></span></f:else>
                                         </f:if>
                                     </li>
                                 </ul>
@@ -81,7 +81,7 @@
                         </f:if>
                     </f:then>
                     <f:else>
-                        <p class="text-muted italic mb-4">No comments yet. Be the first to comment!</p>
+                        <p class="text-muted italic mb-4"><f:translate key="post.comments_noCommentLine" /></p>
                     </f:else>
                 </f:if>
 
@@ -89,34 +89,34 @@
                 <f:if condition="{post.allowComments}">
                     <f:then>
                         <div class="card bg-light p-4 border">
-                            <h5 class="card-title mb-3">Leave a Comment</h5>
+                            <h5 class="card-title mb-3"><f:translate key="post.comments_leaveAComment" /></h5>
                             <f:form action="addComment" name="newComment" object="{newComment}" arguments="{post: post}">
                                 <div class="row">
                                     <f:security.ifAuthenticated>
                                         <f:then>
                                             <div class="col-md-6 mb-3">
-                                                <label for="comment-author" class="form-label">Your Name <span class="text-danger">*</span></label>
+                                                <label for="comment-author" class="form-label"><f:translate key="post.comments_name" /> <span class="text-danger">*</span></label>
                                                 <f:form.textfield property="authorName" id="comment-author" value="{loggedInUser.name -> f:or(alternative: loggedInUser.username)}" readonly="readonly" required="true" class="form-control bg-light" />
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <label for="comment-email" class="form-label">Your Email <span class="text-danger">*</span></label>
+                                                <label for="comment-email" class="form-label"><f:translate key="post.comments_email" /> <span class="text-danger">*</span></label>
                                                 <f:form.textfield property="authorEmail" id="comment-email" type="email" value="{loggedInUser.email}" readonly="readonly" required="true" class="form-control bg-light" />
                                             </div>
                                         </f:then>
                                         <f:else>
                                             <div class="col-md-6 mb-3">
-                                                <label for="comment-author" class="form-label">Your Name <span class="text-danger">*</span></label>
+                                                <label for="comment-author" class="form-label"><f:translate key="post.comments_name" /><span class="text-danger">*</span></label>
                                                 <f:form.textfield property="authorName" id="comment-author" required="true" class="form-control" placeholder="Enter your name" />
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <label for="comment-email" class="form-label">Your Email <span class="text-danger">*</span></label>
+                                                <label for="comment-email" class="form-label"><f:translate key="post.comments_email" /> <span class="text-danger">*</span></label>
                                                 <f:form.textfield property="authorEmail" id="comment-email" type="email" required="true" class="form-control" placeholder="Enter your email" />
                                             </div>
                                         </f:else>
                                     </f:security.ifAuthenticated>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="comment-content" class="form-label">Comment <span class="text-danger">*</span></label>
+                                    <label for="comment-content" class="form-label"><f:translate key="post.comments_comment" /> <span class="text-danger">*</span></label>
                                     <f:form.textarea property="content" id="comment-content" rows="4" required="true" class="form-control" placeholder="Write your comment here..." />
                                 </div>
                                 <f:form.submit value="Submit Comment" class="btn btn-primary" />
@@ -125,7 +125,7 @@
                     </f:then>
                     <f:else>
                         <div class="alert alert-secondary text-center mb-0">
-                            🔒 Comments are disabled for this blog post.
+                            <f:translate key="post.comments_disabled" />
                         </div>
                     </f:else>
                 </f:if>
@@ -133,7 +133,7 @@
             </f:if>
 
             <div class="mt-4">
-                <f:link.action action="list" class="btn btn-secondary">← Back to Posts</f:link.action>
+                <f:link.action action="list" class="btn btn-secondary"><f:translate key="post.backToPosts" /></f:link.action>
             </div>
         </div>
     </div>

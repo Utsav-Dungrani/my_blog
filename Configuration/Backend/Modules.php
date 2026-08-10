@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'myblog_main' => [
-        'labels' => [
-            'title' => 'Blogs',
-        ],
-        'iconIdentifier' => 'actions-document',
-        'position' => [
-            'after' => 'web',
-        ],
-    ],
+    // 'myblog_main' => [
+    //     'labels' => [
+    //         'title' => 'Blogs',
+    //     ],
+    //     'iconIdentifier' => 'actions-document',
+    //     'position' => [
+    //         'after' => 'web',
+    //     ],
+    // ],
 
     'myblog_posts' => [
-        'parent' => 'myblog_main',
+        'parent' => 'web',
         'position' => [
-            'before' => '*',
+            'after' => 'info',
         ],
         'access' => 'user',
         'path' => '/module/myblog/posts',

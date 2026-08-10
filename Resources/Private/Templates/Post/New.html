@@ -1,39 +1,39 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 
 <div class="container mt-4">
-    <h2>Create New Post</h2>
+    <h2><f:translate key="form.post.new" /></h2>
 
     <f:flashMessages />
 
     <f:form action="create" name="newPost" object="{newPost}" class="mt-3" enctype="multipart/form-data">
         <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
+            <label for="title" class="form-label"><f:translate key="form.title" /></label>
             <f:form.textfield property="title" id="title" required="true" class="form-control" />
         </div>
 
         <div class="mb-3">
-            <label for="author" class="form-label">Author</label>
+            <label for="author" class="form-label"><f:translate key="form.author" /></label>
             <f:form.textfield property="author" id="author" required="true" class="form-control" />
         </div>
 
         <div class="mb-3">
-            <label for="readingTime" class="form-label">Reading Time (minutes) <span class="text-danger">*</span></label>
+            <label for="readingTime" class="form-label"><f:translate key="form.readingTime" /> <span class="text-danger">*</span></label>
             <f:form.textfield property="readingTime" id="readingTime" type="number" required="true" additionalAttributes="{min: '1'}" class="form-control" placeholder="e.g. 5" />
         </div>
 
         <div class="mb-3 form-check">
             <f:form.checkbox property="allowComments" value="1" id="allowComments" class="form-check-input" checked="true" />
-            <label class="form-check-label fw-bold" for="allowComments">Allow readers to comment on this post</label>
+            <label class="form-check-label fw-bold" for="allowComments"><f:translate key="form.allowCommenting" /></label>
         </div>
 
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label"><f:translate key="form.description" /></label>
             <f:form.textarea property="description" id="description" rows="5" required="true" class="form-control" />
         </div>
 
         <f:if condition="{categories}">
             <div class="mb-3">
-                <label class="form-label d-block fw-bold">Categories</label>
+                <label class="form-label d-block fw-bold"><f:translate key="form.categories" /></label>
                 <div class="d-flex flex-wrap gap-3 p-3 bg-light rounded border">
                     <f:for each="{categories}" as="category">
                         <div class="form-check">
@@ -42,17 +42,17 @@
                         </div>
                     </f:for>
                 </div>
-                <div class="form-text text-muted">Categories are optional.</div>
+                <div class="form-text text-muted"><f:translate key="form.categoriesAreOptional" /></div>
             </div>
         </f:if>
 
         <div class="d-flex gap-2">
             <div class="mb-3 w-100">
-                <label for="image" class="form-label">Image</label>
+                <label for="image" class="form-label"><f:translate key="form.image" /></label>
                 <f:form.upload name="imageUpload" id="image" accept=".jpg,.jpeg,.png,.webp" required="true" class="form-control" />
             </div>
-            <f:form.submit value="Save Post" class="btn btn-primary" />
-            <f:link.action action="list" class="btn btn-secondary">Cancel</f:link.action>
+            <f:form.submit value="{f:translate(key: 'form.savePost')}" class="btn btn-primary" />
+            <f:link.action action="list" class="btn btn-secondary"><f:translate key="form.cancel" /></f:link.action>
         </div>
     </f:form>
 </div>

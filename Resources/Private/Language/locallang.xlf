@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="messages" date="2026-08-10T12:00:00Z" product-name="my_blog">
+        <header/>
+        <body>
+            <trans-unit id="list.title">
+                <source>Blog Posts</source>
+            </trans-unit>
+            <trans-unit id="list.searchPlaceholder">
+                <source>Search title...</source>
+            </trans-unit>
+            <trans-unit id="list.reset">
+                <source>✖ Reset</source>
+            </trans-unit>
+            <trans-unit id="list.createNew">
+                <source>+ Create New Post</source>
+            </trans-unit>
+            <trans-unit id="list.logout">
+                <source>Log Out</source>
+            </trans-unit>
+            <trans-unit id="list.login">
+                <source>Log In</source>
+            </trans-unit>
+            <trans-unit id="list.signup">
+                <source>Sign Up</source>
+            </trans-unit>
+            <trans-unit id="list.filterBy">
+                <source>Filter by:</source>
+            </trans-unit>
+            <trans-unit id="list.allPosts">
+                <source>All Posts</source>
+            </trans-unit>
+            <trans-unit id="list.myPosts">
+                <source>My Posts</source>
+            </trans-unit>
+            <trans-unit id="list.postsCommented">
+                <source>Posts I've Commented</source>
+            </trans-unit>
+            <trans-unit id="list.from">
+                <source>From</source>
+            </trans-unit>
+            <trans-unit id="list.to">
+                <source>To</source>
+            </trans-unit>
+            <trans-unit id="list.apply">
+                <source>Apply</source>
+            </trans-unit>
+            <trans-unit id="list.sortBy">
+                <source>Sort by:</source>
+            </trans-unit>
+            <trans-unit id="list.edit">
+                <source>Edit</source>
+            </trans-unit>
+            <trans-unit id="list.delete">
+                <source>Delete</source>
+            </trans-unit>
+            <trans-unit id="list.noPosts">
+                <source>No blog posts found.</source>
+            </trans-unit>
+            <trans-unit id="list.previous">
+                <source>Previous</source>
+            </trans-unit>
+            <trans-unit id="list.next">
+                <source>Next</source>
+            </trans-unit>
+            <trans-unit id="list.noPostsFound">
+                <source>No blog posts found.</source>
+            </trans-unit>
+            <trans-unit id="form.post.new">
+                <source>Create New Post</source>
+            </trans-unit>
+            <trans-unit id="form.post.edit">
+                <source>Edit Post:</source>
+            </trans-unit>
+            <trans-unit id="form.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="form.author">
+                <source>Author</source>
+            </trans-unit>
+            <trans-unit id="form.readingTime">
+                <source>Reading Time (minutes)</source>
+            </trans-unit>
+            <trans-unit id="form.allowCommenting">
+                <source>Allow readers to comment on this post</source>
+            </trans-unit>
+            <trans-unit id="form.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="form.categories">
+                <source>Categories</source>
+            </trans-unit>
+            <trans-unit id="form.categoriesAreOptional">
+                <source>Categories are optional.</source>
+            </trans-unit>
+            <trans-unit id="form.cancel">
+                <source>Cancel</source>
+            </trans-unit>
+            <trans-unit id="form.savePost">
+                <source>Save Post</source>
+            </trans-unit>
+            <trans-unit id="form.updatePost">
+                <source>Update Post</source>
+            </trans-unit>
+            <trans-unit id="form.image">
+                <source>Image</source>
+            </trans-unit>
+            <trans-unit id="form.currentImage">
+                <source>Current Image</source>
+            </trans-unit>
+            <trans-unit id="form.replaceImage">
+                <source>Image (replace)</source>
+            </trans-unit>
+            <trans-unit id="post.backToPosts">
+                <source>← Back to Posts</source>
+            </trans-unit>
+            <trans-unit id="post.comments_disabled">
+                <source>🔒 Comments are disabled for this blog post.</source>
+            </trans-unit>
+            <trans-unit id="post.comments_leaveAComment">
+                <source>Leave a Comment</source>
+            </trans-unit>
+            <trans-unit id="post.comments_noCommentLine">
+                <source>No comments yet. Be the first to comment!</source>
+            </trans-unit>
+            <trans-unit id="post.comments_name">
+                <source>Your Name</source>
+            </trans-unit>
+            <trans-unit id="post.comments_email">
+                <source>Your Email</source>
+            </trans-unit>
+            <trans-unit id="post.comments_comment">
+                <source>Comment</source>
+            </trans-unit>
+            <trans-unit id="post.comments.previous">
+                <source>Previous</source>
+            </trans-unit>
+            <trans-unit id="post.comments.next">
+                <source>Next</source>
+            </trans-unit>
+            <trans-unit id="post.created">
+                <source>Created:</source>
+            </trans-unit>
+            <trans-unit id="post.edited">
+                <source>Edited:</source>
+            </trans-unit>
+            <trans-unit id="post.readTime">
+                <source>min read</source>
+            </trans-unit>
+            <trans-unit id="post.views">
+                <source>views</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
