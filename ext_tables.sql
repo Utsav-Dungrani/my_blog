@@ -44,3 +44,9 @@ CREATE TABLE tx_myblog_domain_model_comment (
     PRIMARY KEY (uid),
     KEY parent (pid)
 );
+
+CREATE TABLE tx_news_domain_model_news (
+    feature_image int(11) unsigned DEFAULT '0',
+    subtitle varchar(255) DEFAULT '' NOT NULL,
+    description_news text
+);

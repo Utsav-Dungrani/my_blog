@@ -37,3 +37,11 @@ plugin.tx_myblog_blogplugin {
         enableComments = 1
     }
 }
+
+plugin.tx_news {
+    view {
+        templateRootPath = EXT:my_blog/Resources/Private/Templates/News/
+        partialRootPath = EXT:my_blog/Resources/Private/Partials/News/
+        layoutRootPath = EXT:my_blog/Resources/Private/Layouts/News/
+    }
+}

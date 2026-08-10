@@ -1,0 +1,82 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:n="http://typo3.org/ns/GeorgRinger/News/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Detail" />
+
+<f:section name="content">
+    <f:if condition="{newsItem}">
+        <n:format.nothing>
+            <n:excludeDisplayedNews newsItem="{newsItem}" />
+            <n:titleTag>
+                <f:format.htmlentitiesDecode>{f:if(condition: newsItem.alternativeTitle, then: newsItem.alternativeTitle, else: newsItem.title)}</f:format.htmlentitiesDecode>
+            </n:titleTag>
+        </n:format.nothing>
+
+        <!-- Header: Title & Custom Subtitle -->
+        <div class="header">
+            <h1 itemprop="headline">{newsItem.title}</h1>
+            <f:if condition="{newsItem.subtitle}">
+                <h3 class="subtitle">{newsItem.subtitle}</h2>
+            </f:if>
+        </div>
+
+        <div class="footer">
+            <p>
+                <span class="news-list-date">
+                    <time itemprop="datePublished" datetime="{f:format.date(date:newsItem.datetime, format:'c')}">
+                        <f:format.date format="{f:translate(key:'dateFormat')}">{newsItem.datetime}</f:format.date>
+                    </time>
+                </span>
+                <f:if condition="{newsItem.author}">
+                    <span class="news-list-author">
+                        <f:translate key="author_simple" /> <span>{newsItem.author}</span>
+                    </span>
+                </f:if>
+            </p>
+        </div>
+
+        <!-- RenderMedia ViewHelper controls the default right-aligned floating image layout -->
+        <n:renderMedia news="{newsItem}" imgClass="img-responsive" videoClass="video-wrapper" audioClass="audio-wrapper">
+            
+            <!-- Custom Feature Image (Top News Only) inside right-aligned news-img-wrap -->
+            <f:if condition="{newsItem.istopnews} && {newsItem.featureImage}">
+                <div class="news-img-wrap">
+                    <f:image image="{newsItem.featureImage}" alt="{newsItem.title}" class="img-responsive feature-image" />
+                </div>
+            </f:if>
+
+            <!-- Teaser -->
+            <f:if condition="{newsItem.teaser}">
+                <div class="teaser-text" itemprop="description">
+                    <f:format.html>{newsItem.teaser}</f:format.html>
+                </div>
+            </f:if>
+
+            <!-- Custom RTE Description -->
+            <f:if condition="{newsItem.descriptionNews}">
+                <div class="news-custom-description">
+                    <f:format.html>{newsItem.descriptionNews}</f:format.html>
+                </div>
+            </f:if>
+
+            <!-- Standard Media Files -->
+            <f:render partial="Detail/MediaContainer" arguments="{media: newsItem.mediaNonPreviews, settings:settings}" />
+
+            <!-- Main Body Text -->
+            <div class="news-text-wrap" itemprop="articleBody">
+                <f:format.html>{newsItem.bodytext}</f:format.html>
+            </div>
+        </n:renderMedia>
+
+        <!-- Back Link -->
+        <f:if condition="{settings.backPid}">
+            <div class="news-backlink-wrap">
+                <f:link.page pageUid="{settings.backPid}">
+                    <f:translate key="back-link" />
+                </f:link.page>
+            </div>
+        </f:if>
+    </f:if>
+</f:section>
+</html>

@@ -1,0 +1,74 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:n="http://typo3.org/ns/GeorgRinger/News/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<div class="article articletype-{newsItem.type}{f:if(condition: newsItem.istopnews, then: ' topnews')}" itemscope="itemscope" itemtype="https://schema.org/Article">
+    <n:excludeDisplayedNews newsItem="{newsItem}"/>
+
+    <!-- Header / Title -->
+    <div class="header">
+        <h3>
+            <n:link newsItem="{newsItem}" settings="{settings}" title="{newsItem.title}" itemprop="url">
+                <span itemprop="headline">{newsItem.title}</span>
+            </n:link>
+        </h3>
+    </div>
+
+    <!-- Feature Image (Only displayed if Top News is activated) -->
+    <f:if condition="{newsItem.istopnews} && {newsItem.featureImage}">
+        <div class="feature-image-wrapper">
+            <n:link newsItem="{newsItem}" settings="{settings}" title="{newsItem.title}">
+                <f:image image="{newsItem.featureImage}" alt="{newsItem.title}" maxWidth="800" class="img-responsive feature-image" />
+            </n:link>
+        </div>
+    </f:if>
+
+    <!-- Standard Media Preview (fallback if not topnews feature image) -->
+    <f:if condition="{newsItem.mediaPreviews}">
+        <div class="news-img-wrap">
+            <n:link newsItem="{newsItem}" settings="{settings}" title="{newsItem.title}">
+                <f:alias map="{mediaElement: newsItem.mediaPreviews.0}">
+                    <f:if condition="{mediaElement.originalResource.type} == 2">
+                        <f:image image="{mediaElement}" title="{mediaElement.originalResource.title}" alt="{mediaElement.originalResource.alternative}" loading="{settings.list.media.image.lazyLoading}" maxWidth="{f:if(condition: settings.media.maxWidth, then: settings.media.maxWidth, else: settings.list.media.image.maxWidth)}" maxHeight="{f:if(condition: settings.media.maxHeight, then: settings.media.maxHeight, else: settings.list.media.image.maxHeight)}"/>
+                    </f:if>
+                </f:alias>
+            </n:link>
+        </div>
+    </f:if>
+
+    <!-- Teaser -->
+    <div class="teaser-text">
+        <n:removeMediaTags>
+            <f:if condition="{newsItem.teaser}">
+                <f:then>
+                    <div itemprop="description">{newsItem.teaser -> f:format.crop(maxCharacters: '{settings.cropMaxCharacters}', respectWordBoundaries:'1') -> f:format.html()}</div>
+                </f:then>
+                <f:else>
+                    <div itemprop="description">{newsItem.bodytext -> f:format.crop(maxCharacters: '{settings.cropMaxCharacters}', respectWordBoundaries:'1') -> f:format.html()}</div>
+                </f:else>
+            </f:if>
+        </n:removeMediaTags>
+
+        <n:link newsItem="{newsItem}" settings="{settings}" class="more" title="{newsItem.title}">
+            <f:translate key="more-link"/>
+        </n:link>
+    </div>
+
+    <!-- Footer: Date & Author -->
+    <div class="footer">
+        <p>
+            <span class="news-list-date">
+                <time itemprop="datePublished" datetime="{f:format.date(date:newsItem.datetime, format:'c')}">
+                    <f:format.date format="{f:translate(key:'dateFormat')}">{newsItem.datetime}</f:format.date>
+                </time>
+            </span>
+
+            <f:if condition="{newsItem.author}">
+                <span class="news-list-author">
+                    <f:translate key="author" arguments="{0:newsItem.author}"/>
+                </span>
+            </f:if>
+        </p>
+    </div>
+</div>
+</html>

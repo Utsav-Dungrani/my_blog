@@ -92,3 +92,10 @@ blogAjax {
         conf.tx_myblog_domain_model_post.required = 1
     }
 [global]
+
+# Override EXT:news Templates
+plugin.tx_news.view {
+    templateRootPaths.100 = EXT:my_blog/Resources/Private/Templates/
+    partialRootPaths.100 = EXT:my_blog/Resources/Private/Partials/News/
+    layoutRootPaths.100 = EXT:my_blog/Resources/Private/Layouts/News/
+}
