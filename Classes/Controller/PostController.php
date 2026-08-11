@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use NitsanAi\MyBlog\Domain\Model\FrontendUser;
 use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
-use TYPO3\CMS\Core\Resource\DuplicationBehavior;
+use TYPO3\CMS\Core\Resource\Enum\DuplicationBehavior;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use NitsanAi\MyBlog\Domain\Repository\PostRepository;
 

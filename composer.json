@@ -1,7 +1,7 @@
 {
     "name": "nitsan-ai/my_blog",
     "type": "typo3-cms-extension",
-    "description": "",
+    "description": "My Blog",
     "homepage": "https://typo3-13.4-composer.ddev.site/",
     "license": "GPL-2.0-or-later",
     "keywords": ["TYPO3 CMS"],
@@ -13,9 +13,13 @@
             "NitsanAi\\MyBlog\\": "Classes/"
         }
     },
+    "version": "1.0.0",
     "extra": {
         "typo3/cms": {
             "extension-key": "my_blog"
+        },
+        "branch-alias": {
+            "dev-main": "1.0.x-dev"
         }
     }
 }
