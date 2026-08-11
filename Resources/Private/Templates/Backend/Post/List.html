@@ -1,93 +1,131 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       xmlns:blog="http://typo3.org/ns/NitsanAi/MyBlog/ViewHelpers"
       data-namespace-typo3-fluid="true">
-
-<f:if condition="{pageId} == 0">
-    <f:then>
-        <f:be.infobox title="Select a Page" state="info">
-            <f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.no_page_selected" />
-        </f:be.infobox>
-    </f:then>
-    <f:else>
-        <f:if condition="{posts}">
-            <f:then>
-                <h1><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.title" /></h1>
-                <div class="table-fit">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.title" /></th>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.description" /></th>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.author" /></th>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.categories" /></th>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.comments" /></th>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.readingTime" /></th>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.views" /></th>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.created" /></th>
-                                <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.edited" /></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <f:for each="{posts}" as="post">
+      
+<f:layout name="Module" />
+<f:section name="Content">
+    <f:if condition="{pageId} == 0">
+        <f:then>
+            <f:be.infobox title="Select a Page" state="info">
+                <f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.no_page_selected" />
+            </f:be.infobox>
+        </f:then>
+        <f:else>
+            <f:if condition="{posts}">
+                <f:then>
+                    <h1><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.title" /></h1>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <label for="filter-title" class="form-label"><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.filter.title" /></label>
+                            <input type="text" id="filter-title" class="form-control" placeholder="Search by title..." />
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filter-category" class="form-label"><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.filter.category" /></label>
+                            <select id="filter-category" class="form-select">
+                                <option value="">All Categories</option>
+                                <f:for each="{categories}" as="cat">
+                                    <option value="{cat.uid}">{cat.title}</option>
+                                </f:for>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filter-date-start" class="form-label"><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.filter.startDate" /></label>
+                            <input type="date" id="filter-date-start" class="form-control" title="Start Date" />
+                        </div>
+                        <div class="col-md-2">
+                            <label for="filter-date-end" class="form-label"><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.filter.endDate" /></label>
+                            <input type="date" id="filter-date-end" class="form-control" title="End Date" />
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <button id="filter-btn-apply" class="btn btn-primary ms-2">Filter</button>
+                            <button id="filter-btn-clear" class="btn btn-default">Reset</button>
+                        </div>
+                    </div>
+                    <div class="table-fit">
+                        <table class="table table-striped table-hover myblog-post-table">
+                            <thead>
                                 <tr>
-                                    <td><strong>{post.title}</strong></td>
-                                    <td>
-                                        <f:if condition="{post.description}">
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#descriptionModal-{post.uid}" title="View full description" class="text-decoration-none" style="border-bottom: 1px dashed;">
-                                                <f:format.crop maxCharacters="15" append="..."><f:format.stripTags>{post.description}</f:format.stripTags></f:format.crop>
-                                            </a>
-                                            
-                                            <div class="modal fade" id="descriptionModal-{post.uid}" tabindex="-1" aria-labelledby="descriptionModalLabel-{post.uid}" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header justify-content-between">
-                                                            <h5 class="modal-title" id="descriptionModalLabel-{post.uid}">{post.title}</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body text-wrap text-start" style="white-space: normal;">
-                                                            <f:sanitize.html>{post.description}</f:sanitize.html>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.number" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.title" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.description" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.author" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.categories" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.comments" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.readingTime" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.views" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.created" /></th>
+                                    <th><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.th.edited" /></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <f:for each="{posts}" as="post" iteration="iteration">
+                                    <tr data-title="{post.title}" data-categories="<f:for each='{post.categories}' as='cat'>{cat.uid},</f:for>" data-date="{f:format.date(format: 'Y-m-d', date: post.crdate)}">
+                                        <td>{iteration.cycle}</td>
+                                        <td><strong>{post.title}</strong></td>
+                                        <td>
+                                            <f:if condition="{post.description}">
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#descriptionModal-{post.uid}" title="View full description" class="text-decoration-none" style="border-bottom: 1px dashed;">
+                                                    <f:format.crop maxCharacters="15" append="..."><f:format.stripTags>{post.description}</f:format.stripTags></f:format.crop>
+                                                </a>
+                                                
+                                                <div class="modal fade" id="descriptionModal-{post.uid}" tabindex="-1" aria-labelledby="descriptionModalLabel-{post.uid}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header justify-content-between">
+                                                                <h5 class="modal-title" id="descriptionModalLabel-{post.uid}">{post.title}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-wrap text-start" style="white-space: normal;">
+                                                                <f:sanitize.html>{post.description}</f:sanitize.html>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </f:if>
-                                    </td>
-                                    <td>{post.author}</td>
-                                    <td>
-                                        <f:if condition="{post.categories}">
-                                            <f:then>
-                                                <f:for each="{post.categories}" as="category">
-                                                    <span class="badge badge-primary">{category.title}</span>
-                                                </f:for>
-                                            </f:then>
-                                            <f:else>
-                                                <span class="text-muted">-</span>
-                                            </f:else>
-                                        </f:if>
-                                    </td>
-                                    <td>{post.commentCountTotal}</td>
-                                    <td>{post.readingTime} min</td>
-                                    <td>{post.views}</td>
-                                    <td><f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></td>
-                                    <td>
-                                        <f:if condition="{blog:hasBeenEdited(created: post.crdate, updated: post.tstamp)}">
-                                            <f:then><f:format.date format="d M Y, H:i">{post.tstamp}</f:format.date></f:then>
-                                            <f:else><span class="text-muted">-</span></f:else>
-                                        </f:if>
-                                    </td>
-                                </tr>
-                            </f:for>
-                        </tbody>
-                    </table>
-                </div>
-            </f:then>
-            <f:else>
-                <f:be.infobox title="No Posts Found" state="warning">
-                    <f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.no_posts_found" />
-                </f:be.infobox>
-            </f:else>
-        </f:if>
-    </f:else>
-</f:if>
-
+                                            </f:if>
+                                        </td>
+                                        <td>{post.author}</td>
+                                        <td>
+                                            <f:if condition="{post.categories}">
+                                                <f:then>
+                                                    <f:for each="{post.categories}" as="category">
+                                                        <span class="badge badge-primary">{category.title}</span>
+                                                    </f:for>
+                                                </f:then>
+                                                <f:else>
+                                                    <span class="text-muted">-</span>
+                                                </f:else>
+                                            </f:if>
+                                        </td>
+                                        <td>{post.commentCountTotal}</td>
+                                        <td>{post.readingTime} min</td>
+                                        <td>{post.views}</td>
+                                        <td><f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></td>
+                                        <td>
+                                            <f:if condition="{blog:hasBeenEdited(created: post.crdate, updated: post.tstamp)}">
+                                                <f:then><f:format.date format="d M Y, H:i">{post.tstamp}</f:format.date></f:then>
+                                                <f:else><span class="text-muted">-</span></f:else>
+                                            </f:if>
+                                        </td>
+                                    </tr>
+                                </f:for>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <button id="pagination-prev" class="btn btn-default">&laquo; <f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.pagination.previous" /></button>
+                        <span id="pagination-info"><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.pagination.page" /></span>
+                        <button id="pagination-next" class="btn btn-default"><f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.pagination.next" /> &raquo;</button>
+                    </div>
+                </f:then>
+                <f:else>
+                    <f:be.infobox title="No Posts Found" state="warning">
+                        <f:translate key="LLL:EXT:my_blog/Resources/Private/Language/locallang_mod.xlf:module.no_posts_found" />
+                    </f:be.infobox>
+                </f:else>
+            </f:if>
+        </f:else>
+    </f:if>
+</f:section>
 </html>

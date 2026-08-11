@@ -33,3 +33,8 @@ $GLOBALS['TYPO3_CONF_VARS']['RTE']['Presets']['myblog_custom'] = 'EXT:my_blog/Co
 
 // Register extended News model via ProxyClassGenerator
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['news']['classes']['Domain/Model/News']['my_blog'] = 'my_blog';
+
+// Register XCLASS for your own MyBlog Backend Module Controller
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\NitsanAi\MyBlog\Controller\Backend\PostController::class] = [
+    'className' => \NitsanAi\MyBlog\Xclass\MyBackendPostController::class,
+];

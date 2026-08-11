@@ -21,6 +21,9 @@
             <trans-unit id="module.title" resname="module.title">
                 <source>Blog Posts on Current Page</source>
             </trans-unit>
+            <trans-unit id="module.th.number" resname="module.th.number">
+                <source>No.</source>
+            </trans-unit>
             <trans-unit id="module.th.title" resname="module.th.title">
                 <source>Title</source>
             </trans-unit>
@@ -47,6 +50,30 @@
             </trans-unit>
             <trans-unit id="module.th.edited" resname="module.th.edited">
                 <source>Edited</source>
+            </trans-unit>
+            <trans-unit id="module.td.minutes" resname="module.td.minutes">
+                <source>min</source>
+            </trans-unit>
+            <trans-unit id="module.filter.title" resname="module.filter.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="module.filter.category" resname="module.filter.category">
+                <source>Category</source>
+            </trans-unit>
+            <trans-unit id="module.filter.startDate" resname="module.filter.startDate">
+                <source>Start Date</source>
+            </trans-unit>
+            <trans-unit id="module.filter.endDate" resname="module.filter.endDate">
+                <source>End Date</source>
+            </trans-unit>
+            <trans-unit id="module.pagination.previous" resname="module.pagination.previous">
+                <source>Previous</source>
+            </trans-unit>
+            <trans-unit id="module.pagination.next" resname="module.pagination.next">
+                <source>Next</source>
+            </trans-unit>
+            <trans-unit id="module.pagination.page" resname="module.pagination.page">
+                <source>Page 1 of 1</source>
             </trans-unit>
         </body>
     </file>

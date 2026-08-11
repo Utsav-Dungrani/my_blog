@@ -3,151 +3,151 @@
     <file source-language="en" datatype="plaintext" original="messages" date="2026-08-10T12:00:00Z" product-name="my_blog">
         <header/>
         <body>
-            <trans-unit id="list.title">
+            <trans-unit id="list.title" resname="list.title">
                 <source>Blog Posts</source>
             </trans-unit>
-            <trans-unit id="list.searchPlaceholder">
+            <trans-unit id="list.searchPlaceholder" resname="list.searchPlaceholder">
                 <source>Search title...</source>
             </trans-unit>
-            <trans-unit id="list.reset">
+            <trans-unit id="list.reset" resname="list.reset">
                 <source>✖ Reset</source>
             </trans-unit>
-            <trans-unit id="list.createNew">
+            <trans-unit id="list.createNew" resname="list.createNew">
                 <source>+ Create New Post</source>
             </trans-unit>
-            <trans-unit id="list.logout">
+            <trans-unit id="list.logout" resname="list.logout">
                 <source>Log Out</source>
             </trans-unit>
-            <trans-unit id="list.login">
+            <trans-unit id="list.login" resname="list.login">
                 <source>Log In</source>
             </trans-unit>
-            <trans-unit id="list.signup">
+            <trans-unit id="list.signup" resname="list.signup">
                 <source>Sign Up</source>
             </trans-unit>
-            <trans-unit id="list.filterBy">
+            <trans-unit id="list.filterBy" resname="list.filterBy">
                 <source>Filter by:</source>
             </trans-unit>
-            <trans-unit id="list.allPosts">
+            <trans-unit id="list.allPosts" resname="list.allPosts">
                 <source>All Posts</source>
             </trans-unit>
-            <trans-unit id="list.myPosts">
+            <trans-unit id="list.myPosts" resname="list.myPosts">
                 <source>My Posts</source>
             </trans-unit>
-            <trans-unit id="list.postsCommented">
+            <trans-unit id="list.postsCommented" resname="list.postsCommented">
                 <source>Posts I've Commented</source>
             </trans-unit>
-            <trans-unit id="list.from">
+            <trans-unit id="list.from" resname="list.from">
                 <source>From</source>
             </trans-unit>
-            <trans-unit id="list.to">
+            <trans-unit id="list.to" resname="list.to">
                 <source>To</source>
             </trans-unit>
-            <trans-unit id="list.apply">
+            <trans-unit id="list.apply" resname="list.apply">
                 <source>Apply</source>
             </trans-unit>
-            <trans-unit id="list.sortBy">
+            <trans-unit id="list.sortBy" resname="list.sortBy">
                 <source>Sort by:</source>
             </trans-unit>
-            <trans-unit id="list.edit">
+            <trans-unit id="list.edit" resname="list.edit">
                 <source>Edit</source>
             </trans-unit>
-            <trans-unit id="list.delete">
+            <trans-unit id="list.delete" resname="list.delete">
                 <source>Delete</source>
             </trans-unit>
-            <trans-unit id="list.noPosts">
+            <trans-unit id="list.noPosts" resname="list.noPosts">
                 <source>No blog posts found.</source>
             </trans-unit>
-            <trans-unit id="list.previous">
+            <trans-unit id="list.previous" resname="list.previous">
                 <source>Previous</source>
             </trans-unit>
-            <trans-unit id="list.next">
+            <trans-unit id="list.next" resname="list.next">
                 <source>Next</source>
             </trans-unit>
-            <trans-unit id="list.noPostsFound">
+            <trans-unit id="list.noPostsFound" resname="list.noPostsFound">
                 <source>No blog posts found.</source>
             </trans-unit>
-            <trans-unit id="form.post.new">
+            <trans-unit id="form.post.new" resname="form.post.new">
                 <source>Create New Post</source>
             </trans-unit>
-            <trans-unit id="form.post.edit">
+            <trans-unit id="form.post.edit" resname="form.post.edit">
                 <source>Edit Post:</source>
             </trans-unit>
-            <trans-unit id="form.title">
+            <trans-unit id="form.title" resname="form.title">
                 <source>Title</source>
             </trans-unit>
-            <trans-unit id="form.author">
+            <trans-unit id="form.author" resname="form.author">
                 <source>Author</source>
             </trans-unit>
-            <trans-unit id="form.readingTime">
+            <trans-unit id="form.readingTime" resname="form.readingTime">
                 <source>Reading Time (minutes)</source>
             </trans-unit>
-            <trans-unit id="form.allowCommenting">
+            <trans-unit id="form.allowCommenting" resname="form.allowCommenting">
                 <source>Allow readers to comment on this post</source>
             </trans-unit>
-            <trans-unit id="form.description">
+            <trans-unit id="form.description" resname="form.description">
                 <source>Description</source>
             </trans-unit>
-            <trans-unit id="form.categories">
+            <trans-unit id="form.categories" resname="form.categories">
                 <source>Categories</source>
             </trans-unit>
-            <trans-unit id="form.categoriesAreOptional">
+            <trans-unit id="form.categoriesAreOptional" resname="form.categoriesAreOptional">
                 <source>Categories are optional.</source>
             </trans-unit>
-            <trans-unit id="form.cancel">
+            <trans-unit id="form.cancel" resname="form.cancel">
                 <source>Cancel</source>
             </trans-unit>
-            <trans-unit id="form.savePost">
+            <trans-unit id="form.savePost" resname="form.savePost">
                 <source>Save Post</source>
             </trans-unit>
-            <trans-unit id="form.updatePost">
+            <trans-unit id="form.updatePost" resname="form.updatePost">
                 <source>Update Post</source>
             </trans-unit>
-            <trans-unit id="form.image">
+            <trans-unit id="form.image" resname="form.image">
                 <source>Image</source>
             </trans-unit>
-            <trans-unit id="form.currentImage">
+            <trans-unit id="form.currentImage" resname="form.currentImage">
                 <source>Current Image</source>
             </trans-unit>
-            <trans-unit id="form.replaceImage">
+            <trans-unit id="form.replaceImage" resname="form.replaceImage">
                 <source>Image (replace)</source>
             </trans-unit>
-            <trans-unit id="post.backToPosts">
+            <trans-unit id="post.backToPosts" resname="post.backToPosts">
                 <source>← Back to Posts</source>
             </trans-unit>
-            <trans-unit id="post.comments_disabled">
+            <trans-unit id="post.comments_disabled" resname="post.comments_disabled">
                 <source>🔒 Comments are disabled for this blog post.</source>
             </trans-unit>
-            <trans-unit id="post.comments_leaveAComment">
+            <trans-unit id="post.comments_leaveAComment" resname="post.comments_leaveAComment">
                 <source>Leave a Comment</source>
             </trans-unit>
-            <trans-unit id="post.comments_noCommentLine">
+            <trans-unit id="post.comments_noCommentLine" resname="post.comments_noCommentLine">
                 <source>No comments yet. Be the first to comment!</source>
             </trans-unit>
-            <trans-unit id="post.comments_name">
+            <trans-unit id="post.comments_name" resname="post.comments_name">
                 <source>Your Name</source>
             </trans-unit>
-            <trans-unit id="post.comments_email">
+            <trans-unit id="post.comments_email" resname="post.comments_email">
                 <source>Your Email</source>
             </trans-unit>
-            <trans-unit id="post.comments_comment">
+            <trans-unit id="post.comments_comment" resname="post.comments_comment">
                 <source>Comment</source>
             </trans-unit>
-            <trans-unit id="post.comments.previous">
+            <trans-unit id="post.comments.previous" resname="post.comments.previous">
                 <source>Previous</source>
             </trans-unit>
-            <trans-unit id="post.comments.next">
+            <trans-unit id="post.comments.next" resname="post.comments.next">
                 <source>Next</source>
             </trans-unit>
-            <trans-unit id="post.created">
+            <trans-unit id="post.created" resname="post.created">
                 <source>Created:</source>
             </trans-unit>
-            <trans-unit id="post.edited">
+            <trans-unit id="post.edited" resname="post.edited">
                 <source>Edited:</source>
             </trans-unit>
-            <trans-unit id="post.readTime">
+            <trans-unit id="post.readTime" resname="post.readTime">
                 <source>min read</source>
             </trans-unit>
-            <trans-unit id="post.views">
+            <trans-unit id="post.views" resname="post.views">
                 <source>views</source>
             </trans-unit>
         </body>
