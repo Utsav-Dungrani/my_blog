@@ -9,7 +9,7 @@ $contentType = ExtensionUtility::registerPlugin(
     'BlogPlugin',
     'Blog Posts Display & Management',
     'content-plugin',
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
+    'CType'
 );
 
 ExtensionManagementUtility::addPiFlexFormValue(

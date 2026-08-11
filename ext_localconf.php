@@ -18,7 +18,7 @@ ExtensionUtility::configurePlugin(
         PostController::class => 'list, show, new, create, edit, update, delete, addComment',
         \NitsanAi\MyBlog\Controller\AuthController::class => 'register, createAccount',
     ],
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
+    'CType'
 );
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = \NitsanAi\MyBlog\Hooks\CommentDataHandlerHook::class;
