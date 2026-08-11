@@ -46,9 +46,15 @@ class PostController extends ActionController
         $moduleTemplate->assign('posts', $posts);
         $moduleTemplate->assign('pageId', $pageId);
 
+        // Add some buttons to the DocHeader
+        $this->registerDocHeaderButtons($moduleTemplate, $pageId);
+
         return $moduleTemplate->renderResponse('Backend/Post/List');
     }
 
+    /**
+     * Generates standard buttons for the backend module
+     */
     protected function registerDocHeaderButtons(ModuleTemplate $moduleTemplate, int $pageId): void
     {
         $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
@@ -60,10 +66,11 @@ class PostController extends ActionController
             ->setHref((string)$uriBuilder->buildUriFromRoute('myblog_posts', ['id' => $pageId]))
             ->setTitle('Reload')
             ->setIcon($iconFactory->getIcon('actions-refresh', IconSize::SMALL));
-        $buttonBar->addButton($reloadButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+        $buttonBar->addButton($reloadButton, ButtonBar::BUTTON_POSITION_RIGHT);
 
+        // 2. View webpage (only if a valid page id is selected)
         if ($pageId > 0) {
-            // 2. View Page Button
+            // Using PreviewUriBuilder for safe preview links
             $previewUriBuilder = PreviewUriBuilder::create($pageId);
             $previewDataAttributes = $previewUriBuilder->buildDispatcherDataAttributes();
             if ($previewDataAttributes) {
@@ -71,12 +78,11 @@ class PostController extends ActionController
                     ->setHref('#')
                     ->setDataAttributes($previewDataAttributes)
                     ->setTitle('View Webpage')
-                    ->setShowLabelText(true)
                     ->setIcon($iconFactory->getIcon('actions-view-page', IconSize::SMALL));
-                $buttonBar->addButton($viewButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
+                $buttonBar->addButton($viewButton, ButtonBar::BUTTON_POSITION_LEFT, 1);
             }
 
-            // 3. Create New Post Button
+            // 3. Create New Record button
             $newRecordUrl = (string)$uriBuilder->buildUriFromRoute('record_edit', [
                 'edit' => ['tx_myblog_domain_model_post' => [$pageId => 'new']],
                 'returnUrl' => (string)$uriBuilder->buildUriFromRoute('myblog_posts', ['id' => $pageId])
@@ -86,7 +92,7 @@ class PostController extends ActionController
                 ->setTitle('Create New Post')
                 ->setShowLabelText(true)
                 ->setIcon($iconFactory->getIcon('actions-add', IconSize::SMALL));
-            $buttonBar->addButton($createButton, ButtonBar::BUTTON_POSITION_LEFT, 1);
+            $buttonBar->addButton($createButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
         }
     }
 }

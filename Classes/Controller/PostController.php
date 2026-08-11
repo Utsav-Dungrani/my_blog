@@ -253,7 +253,7 @@ class PostController extends ActionController
             $this->addFlashMessage('Please upload an image for the blog post.', '', ContextualFeedbackSeverity::ERROR);
             $this->view->assign('newPost', $newPost);
             $this->view->assign('categories', $this->categoryRepository->findAll());
-            $this->view->setTemplate('New');
+            $this->view->getRenderingContext()->setControllerAction('New');
             return $this->htmlResponse();
         }
 
@@ -261,7 +261,7 @@ class PostController extends ActionController
             $this->addFlashMessage('Please enter a valid reading time in minutes.', '', ContextualFeedbackSeverity::ERROR);
             $this->view->assign('newPost', $newPost);
             $this->view->assign('categories', $this->categoryRepository->findAll());
-            $this->view->setTemplate('New');
+            $this->view->getRenderingContext()->setControllerAction('New');
             return $this->htmlResponse();
         }
 
@@ -327,7 +327,7 @@ class PostController extends ActionController
             $this->addFlashMessage('Please upload an image for the blog post.', '', ContextualFeedbackSeverity::ERROR);
             $this->view->assign('post', $post);
             $this->view->assign('categories', $this->categoryRepository->findAll());
-            $this->view->setTemplate('Edit');
+            $this->view->getRenderingContext()->setControllerAction('Edit');
             return $this->htmlResponse();
         }
 
@@ -335,7 +335,7 @@ class PostController extends ActionController
             $this->addFlashMessage('Please enter a valid reading time in minutes.', '', ContextualFeedbackSeverity::ERROR);
             $this->view->assign('post', $post);
             $this->view->assign('categories', $this->categoryRepository->findAll());
-            $this->view->setTemplate('Edit');
+            $this->view->getRenderingContext()->setControllerAction('Edit');
             return $this->htmlResponse();
         }
 

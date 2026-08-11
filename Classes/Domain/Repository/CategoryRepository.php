@@ -30,8 +30,6 @@ class CategoryRepository extends Repository
         $pageId = 0;
         if ($pageInformation !== null && method_exists($pageInformation, 'getId')) {
             $pageId = (int)$pageInformation->getId();
-        } elseif (isset($GLOBALS['TSFE']->id)) {
-            $pageId = (int)$GLOBALS['TSFE']->id;
         }
 
         if ($pageId > 0) {

@@ -46,8 +46,8 @@ class Post extends AbstractEntity
 
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\NitsanAi\MyBlog\Domain\Model\Comment>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
      */
+    #[\TYPO3\CMS\Extbase\Annotation\ORM\Cascade(['value' => 'remove'])]
     protected ?ObjectStorage $comments = null;
 
     public function __construct()
