@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace NitsanAi\MyBlog\Controller\Backend;
 
+use TYPO3\CMS\Core\Imaging\IconSize;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Backend\Routing\PreviewUriBuilder;
+use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use NitsanAi\MyBlog\Domain\Repository\PostRepository;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Backend\Template\ModuleTemplate;
-use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Core\Imaging\IconSize;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
-use TYPO3\CMS\Backend\Routing\PreviewUriBuilder;
-use TYPO3\CMS\Core\Page\PageRenderer;
 
 class PostController extends ActionController
 {
@@ -59,12 +59,15 @@ class PostController extends ActionController
         $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
         $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        
+        $hasComponentFactory = class_exists(\TYPO3\CMS\Backend\Template\Components\ComponentFactory::class);
+        $componentFactory = $hasComponentFactory ? GeneralUtility::makeInstance(\TYPO3\CMS\Backend\Template\Components\ComponentFactory::class) : null;
 
         // 1. Reload Button (TYPO3 v14 adds this automatically, so we only add it in v13)
         $typo3Version = new \TYPO3\CMS\Core\Information\Typo3Version();
         if ($typo3Version->getMajorVersion() < 14) {
-            $reloadButton = $buttonBar->makeLinkButton()
-                ->setHref((string)$uriBuilder->buildUriFromRoute('myblog_posts', ['id' => $pageId]))
+            $reloadButton = $hasComponentFactory ? $componentFactory->createLinkButton() : $buttonBar->makeLinkButton();
+            $reloadButton->setHref((string)$uriBuilder->buildUriFromRoute('myblog_posts', ['id' => $pageId]))
                 ->setTitle('Reload')
                 ->setIcon($iconFactory->getIcon('actions-refresh', IconSize::SMALL));
             $buttonBar->addButton($reloadButton, ButtonBar::BUTTON_POSITION_RIGHT);
@@ -76,10 +79,11 @@ class PostController extends ActionController
             $previewUriBuilder = PreviewUriBuilder::create($pageId);
             $previewDataAttributes = $previewUriBuilder->buildDispatcherDataAttributes();
             if ($previewDataAttributes) {
-                $viewButton = $buttonBar->makeLinkButton()
-                    ->setHref('#')
+                $viewButton = $hasComponentFactory ? $componentFactory->createLinkButton() : $buttonBar->makeLinkButton();
+                $viewButton->setHref('#')
                     ->setDataAttributes($previewDataAttributes)
                     ->setTitle('View Webpage')
+                    ->setShowLabelText(true)
                     ->setIcon($iconFactory->getIcon('actions-view-page', IconSize::SMALL));
                 $buttonBar->addButton($viewButton, ButtonBar::BUTTON_POSITION_LEFT, 1);
             }
@@ -89,8 +93,8 @@ class PostController extends ActionController
                 'edit' => ['tx_myblog_domain_model_post' => [$pageId => 'new']],
                 'returnUrl' => (string)$uriBuilder->buildUriFromRoute('myblog_posts', ['id' => $pageId])
             ]);
-            $createButton = $buttonBar->makeLinkButton()
-                ->setHref($newRecordUrl)
+            $createButton = $hasComponentFactory ? $componentFactory->createLinkButton() : $buttonBar->makeLinkButton();
+            $createButton->setHref($newRecordUrl)
                 ->setTitle('Create New Post')
                 ->setShowLabelText(true)
                 ->setIcon($iconFactory->getIcon('actions-add', IconSize::SMALL));

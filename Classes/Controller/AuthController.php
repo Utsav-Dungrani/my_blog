@@ -38,7 +38,8 @@ final class AuthController extends ActionController
         $user->setName($name);
         $user->setEmail($email);
         $user->setPassword(GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance('FE')->getHashedPassword($password));
-        $user->setUsergroup('1');
+        $defaultUsergroup = $this->settings['defaultUsergroup'];
+        $user->setUsergroup((string)$defaultUsergroup);
         $pageInformation = $this->request->getAttribute('frontend.page.information');
         if ($pageInformation !== null && method_exists($pageInformation, 'getId')) {
             $user->setPid((int)$pageInformation->getId());

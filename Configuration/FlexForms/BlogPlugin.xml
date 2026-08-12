@@ -101,6 +101,17 @@
                             </range>
                         </config>
                     </settings.postsPerPage>
+                    <settings.defaultUsergroup>
+                        <label>Default User Group</label>
+                        <description>Select the user group that newly registered users should be assigned to.</description>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <foreign_table>fe_groups</foreign_table>
+                            <maxitems>1</maxitems>
+                            <required>true</required>
+                        </config>
+                    </settings.defaultUsergroup>
                     <settings.loginPageId>
                         <label>Login Page</label>
                         <description>Select the page containing your standard site login form.</description>

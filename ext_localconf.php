@@ -5,8 +5,6 @@ use NitsanAi\MyBlog\Controller\PostController;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-$GLOBALS['TYPO3_CONF_VARS']['FE']['checkFeUserPid'] = false;
-
 ExtensionUtility::configurePlugin(
     'MyBlog',
     'BlogPlugin',

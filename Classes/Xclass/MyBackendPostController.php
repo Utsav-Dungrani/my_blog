@@ -23,10 +23,13 @@ class MyBackendPostController extends OriginalPostController
             $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
             $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
             $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+            
+            $hasComponentFactory = class_exists(\TYPO3\CMS\Backend\Template\Components\ComponentFactory::class);
+            $componentFactory = $hasComponentFactory ? GeneralUtility::makeInstance(\TYPO3\CMS\Backend\Template\Components\ComponentFactory::class) : null;
 
             $listModuleUrl = (string)$uriBuilder->buildUriFromRoute('web_list', ['id' => $pageId]);
-            $listButton = $buttonBar->makeLinkButton()
-                ->setHref($listModuleUrl)
+            $listButton = $hasComponentFactory ? $componentFactory->createLinkButton() : $buttonBar->makeLinkButton();
+            $listButton->setHref($listModuleUrl)
                 ->setTitle('Go to Record List')
                 ->setShowLabelText(true)
                 ->setIcon($iconFactory->getIcon('actions-system-list-open', IconSize::SMALL));
