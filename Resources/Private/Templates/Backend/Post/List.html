@@ -97,7 +97,7 @@
                                                 </f:else>
                                             </f:if>
                                         </td>
-                                        <td>{post.commentCountTotal}</td>
+                                        <td><a href="?postComments={post.uid}&amp;id={pageId}" class="text-decoration-none">{post.commentCountTotal}</a></td>
                                         <td>{post.readingTime} min</td>
                                         <td>{post.views}</td>
                                         <td><f:format.date format="d M Y, H:i">{post.crdate}</f:format.date></td>

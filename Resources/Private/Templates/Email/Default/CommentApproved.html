@@ -1,0 +1,35 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="Email/Default" />
+
+<f:section name="Main">
+<h2>Your Comment Has Been Approved!</h2>
+<p>Hello {comment.authorName},</p>
+<p>Good news! Your comment on the following post has been approved and is now live.</p>
+
+<table style="width: 30%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px;">
+    <tr>
+        <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold; width: 150px;">Post Title:</td>
+        <td style="padding: 10px; border: 1px solid #ddd;"><strong>{post.title}</strong></td>
+    </tr>
+    <tr>
+        <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Post Author:</td>
+        <td style="padding: 10px; border: 1px solid #ddd;"><f:if condition="{post.feUser}"><f:then>{post.feUser.name -> f:or(alternative: post.feUser.username)}</f:then><f:else>{post.author}</f:else></f:if></td>
+    </tr>
+</table>
+
+<f:if condition="{postLink}">
+    <p><a href="{postLink}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; margin: 15px 0;">View Your Comment on the Post</a></p>
+</f:if>
+
+<p><strong>Your Comment:</strong></p>
+<blockquote style="padding: 10px; border-left: 4px solid #ddd; background-color: #f9f9f9; font-style: italic;">
+    <f:format.nl2br>{comment.content}</f:format.nl2br>
+</blockquote>
+
+<p><strong>Comment Date: </strong> <f:format.date date="{comment.crdate}" format="d.m.Y H:i"/></p>
+
+<p style="margin-top: 20px;">
+    Thank you for contributing to our blog!
+</p>
+</f:section>
+</html>

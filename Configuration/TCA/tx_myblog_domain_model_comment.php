@@ -74,7 +74,7 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_myblog_domain_model_post',
-                'foreign_table_where' => 'AND tx_myblog_domain_model_post.pid=###REC_FIELD_pid### AND tx_myblog_domain_model_post.allow_comments=1 ORDER BY tx_myblog_domain_model_post.title',
+                'foreign_table_where' => 'AND tx_myblog_domain_model_post.pid=###REC_FIELD_pid### ORDER BY tx_myblog_domain_model_post.title',
                 'minitems' => 1,
                 'maxitems' => 1,
                 'required' => true,

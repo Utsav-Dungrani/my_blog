@@ -1,8 +1,10 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       xmlns:blog="http://typo3.org/ns/NitsanAi/MyBlog/ViewHelpers"
       data-namespace-typo3-fluid="true">
+<f:layout name="Default" />
 
-<div class="container mt-4" id="myblog-list-container">
+<f:section name="content">
+<div id="myblog-list-container">
     <div class="card">
         <f:if condition="{post.image}">
             <f:then>
@@ -37,8 +39,6 @@
             <f:if condition="{settings.enableComments}">
             <div class="mt-5">
                 <h4 class="mb-4">💬 {blog:commentCount(comments: comments)}</h4>
-
-                <f:flashMessages />
 
                 <!-- Comments List -->
                 <f:if condition="{comments}">
@@ -86,7 +86,7 @@
                 </f:if>
 
                 <!-- Leave a Comment Form / Status -->
-                <f:if condition="{post.allowComments}">
+                <f:if condition="{post.allowComments} || ({post.feUser} && {loggedInUser} && {post.feUser.uid} == {loggedInUser.uid})">
                     <f:then>
                         <div class="card bg-light p-4 border">
                             <h5 class="card-title mb-3"><f:translate key="post.comments_leaveAComment" /></h5>
@@ -138,5 +138,6 @@
         </div>
     </div>
 </div>
+</f:section>
 
 </html>

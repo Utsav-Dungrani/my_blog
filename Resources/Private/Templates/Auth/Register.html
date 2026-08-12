@@ -1,11 +1,12 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="Default" />
+
+<f:section name="content">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm mt-5">
                 <div class="card-body p-4">
                     <h2 class="text-center mb-4">Create an Account</h2>
-                    
-                    <f:flashMessages />
 
                     <f:form action="createAccount" controller="Auth" method="post" additionalAttributes="{role: 'form'}">
                         
@@ -50,4 +51,5 @@
             </div>
         </div>
     </div>
+</f:section>
 </html>

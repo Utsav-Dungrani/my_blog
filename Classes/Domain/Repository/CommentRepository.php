@@ -23,6 +23,21 @@ class CommentRepository extends Repository
         return empty($uids) ? [-1] : array_map('intval', $uids);
     }
 
+    public function getRawApprovalStatus(int $uid): int
+    {
+        $queryBuilder = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_myblog_domain_model_comment');
+            
+        $status = $queryBuilder
+            ->select('approved')
+            ->from('tx_myblog_domain_model_comment')
+            ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, \TYPO3\CMS\Core\Database\Connection::PARAM_INT)))
+            ->executeQuery()
+            ->fetchOne();
+            
+        return $status !== false ? (int)$status : -1;
+    }
+
     public function deleteUnapprovedOlderThan(int $days): int
     {
         $thresholdTimestamp = strtotime('-' . $days . ' days');

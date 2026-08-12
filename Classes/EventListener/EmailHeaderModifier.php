@@ -17,6 +17,11 @@ class EmailHeaderModifier
         if ($message instanceof Email) {
             
             $currentSubject = $message->getSubject();
+            
+            if (str_contains((string)$currentSubject, 'Your Comment is Approved')) {
+                return;
+            }
+            
             $message->subject('[URGENT] ' . $currentSubject);
             
             $message->getHeaders()->addTextHeader('X-MyBlog-System', 'Active');

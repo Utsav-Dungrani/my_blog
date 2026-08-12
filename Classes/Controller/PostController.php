@@ -16,9 +16,9 @@ use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use NitsanAi\MyBlog\Domain\Model\FrontendUser;
 use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
-use TYPO3\CMS\Core\Resource\Enum\DuplicationBehavior;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use NitsanAi\MyBlog\Domain\Repository\PostRepository;
+use TYPO3\CMS\Core\Resource\Enum\DuplicationBehavior;
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use NitsanAi\MyBlog\Domain\Repository\CommentRepository;
@@ -55,7 +55,7 @@ class PostController extends ActionController
     {
         if ($this->arguments->hasArgument('newPost')) {
             $pmc = $this->arguments->getArgument('newPost')->getPropertyMappingConfiguration();
-            $pmc->skipProperties('image');
+            $pmc->skipProperties('image', 'author');
             $pmc->allowAllProperties();
             $pmc->forProperty('categories')->allowAllProperties();
             $pmc->forProperty('categories.*')->allowAllProperties();
@@ -66,7 +66,7 @@ class PostController extends ActionController
     {
         if ($this->arguments->hasArgument('newPost')) {
             $pmc = $this->arguments->getArgument('newPost')->getPropertyMappingConfiguration();
-            $pmc->skipProperties('image');
+            $pmc->skipProperties('image', 'author');
             $pmc->allowAllProperties();
             $pmc->forProperty('categories')->allowAllProperties();
             $pmc->forProperty('categories.*')->allowAllProperties();
@@ -77,7 +77,7 @@ class PostController extends ActionController
     {
         if ($this->arguments->hasArgument('post')) {
             $pmc = $this->arguments->getArgument('post')->getPropertyMappingConfiguration();
-            $pmc->skipProperties('image');
+            $pmc->skipProperties('image', 'author');
             $pmc->allowAllProperties();
             $pmc->forProperty('categories')->allowAllProperties();
             $pmc->forProperty('categories.*')->allowAllProperties();
@@ -229,6 +229,16 @@ class PostController extends ActionController
             return $this->redirect('list');
         }
 
+        if ($newPost === null) {
+            $newPost = new Post();
+        }
+
+        $feUserUid = $context->getPropertyFromAspect('frontend.user', 'id');
+        $loggedInUser = $this->frontendUserRepository->findByUid($feUserUid);
+        if ($loggedInUser && empty($newPost->getAuthor())) {
+            $newPost->setAuthor($loggedInUser->getName() ?: $loggedInUser->getUsername());
+        }
+
         $this->view->assign('newPost', $newPost);
         $this->view->assign('categories', $this->categoryRepository->findAll());
         return $this->htmlResponse();
@@ -245,6 +255,7 @@ class PostController extends ActionController
         $loggedInUser = $this->frontendUserRepository->findByUid($feUserUid);
         if ($loggedInUser) {
             $newPost->setFeUser($loggedInUser);
+            $newPost->setAuthor($loggedInUser->getName() ?: $loggedInUser->getUsername());
         }
 
         $this->handleImageUpload($newPost);
@@ -423,6 +434,7 @@ class PostController extends ActionController
     {
         $context = GeneralUtility::makeInstance(Context::class);
         $isLoggedIn = $context->getPropertyFromAspect('frontend.user', 'isLoggedIn');
+        $feUserUid = 0;
         if ($isLoggedIn) {
             $feUserUid = $context->getPropertyFromAspect('frontend.user', 'id');
             $loggedInUser = $this->frontendUserRepository->findByUid($feUserUid);
@@ -433,11 +445,12 @@ class PostController extends ActionController
             }
         }
 
-        if (!$post->getAllowComments()) {
+        $isAuthor = ($feUserUid > 0 && $post->getFeUser() !== null && $post->getFeUser()->getUid() === $feUserUid);
+
+        if (!$post->getAllowComments() && !$isAuthor) {
             $this->addFlashMessage('Comments are disabled for this blog post.', '', ContextualFeedbackSeverity::ERROR);
             return $this->redirect('show', null, null, ['post' => $post]);
         }
-
 
         if (empty(trim($newComment->getAuthorName())) || empty(trim($newComment->getAuthorEmail())) || empty(trim($newComment->getContent()))) {
             $this->addFlashMessage('Please fill in all comment fields.', '', ContextualFeedbackSeverity::ERROR);

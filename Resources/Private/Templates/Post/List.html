@@ -1,8 +1,10 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       xmlns:blog="http://typo3.org/ns/NitsanAi/MyBlog/ViewHelpers"
       data-namespace-typo3-fluid="true">
+<f:layout name="Default" />
 
-<div class="container mt-4" id="myblog-list-container">
+<f:section name="content">
+<div id="myblog-list-container">
     <f:form action="list" method="post">
         <f:if condition="{selectedCategory}"><f:form.hidden name="selectedCategory" value="{selectedCategory}" /></f:if>
         <f:if condition="{myPostsActive}"><f:form.hidden name="myPosts" value="1" /></f:if>
@@ -33,8 +35,6 @@
             </f:security.ifAuthenticated>
         </div>
     </div>
-
-    <f:flashMessages />
 
     <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
         <f:if condition="{showCategoryFilter}">
@@ -190,5 +190,6 @@
         </f:else>
     </f:if>
 </div>
+</f:section>
 
 </html>

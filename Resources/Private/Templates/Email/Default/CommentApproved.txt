@@ -1,0 +1,19 @@
+Your Comment Has Been Approved!
+
+Hello {comment.authorName},
+
+Good news! Your comment on the following post has been approved and is now live.
+
+POST DETAILS:
+- Title: {post.title}
+- Author: <f:if condition="{post.feUser}"><f:then>{post.feUser.name -> f:or(alternative: post.feUser.username)}</f:then><f:else>{post.author}</f:else></f:if>
+<f:if condition="{postLink}">
+View Your Comment here: {postLink}
+</f:if>
+
+YOUR COMMENT:
+{comment.content}
+
+Comment Date: <f:format.date date="{comment.crdate}" format="d.m.Y H:i"/>
+
+Thank you for contributing to our blog!
