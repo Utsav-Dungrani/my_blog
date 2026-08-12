@@ -28,7 +28,6 @@ $GLOBALS['TYPO3_CONF_VARS']['MAIL']['partialRootPaths'][1710000000] = 'EXT:my_bl
 
 // Register custom CKEditor YAML configuration for the Blog Extension
 $GLOBALS['TYPO3_CONF_VARS']['RTE']['Presets']['myblog_custom'] = 'EXT:my_blog/Configuration/RTE/Custom.yaml';
-$GLOBALS['TYPO3_CONF_VARS']['RTE']['Presets']['default'] = 'EXT:my_blog/Configuration/RTE/Custom.yaml';
 
 // Register extended News model via ProxyClassGenerator
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['news']['classes']['Domain/Model/News']['my_blog'] = 'my_blog';
